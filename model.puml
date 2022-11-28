@@ -1,0 +1,134 @@
+@startuml
+
+<style>
+    legend {
+        FontName Fira Mono
+    }
+    note {
+        FontName Fira Mono
+    }
+</style>
+
+
+legend top left
+    from datetime import datetime as dt
+end legend
+
+
+hide enum empty members
+
+enum Kind {
+    CAT
+    DOG
+    FOX
+    BEAR
+    SNAKE
+    LIZARD
+    TURTLE
+    ...
+}
+
+
+class Creature {
+    +kind: Kind
+    +name: str
+    +birthdate: dt
+    +body: Body
+    +mind: Mind
+    ..properties..
+    +age
+    __
+    +feed()
+    +play()
+    +talk()
+}
+Creature <|-- CreatureActions
+Creature::kind o-- Kind
+
+
+class CreatureActions {
+    +{static}kind_actions: KindActions
+    +get_fried()
+    +seek_for_honey()
+    +be_a_cat()
+    +be_a_naughty_cat()
+    {method}...
+}
+note as annotation
+    KindActions = dict[Kind, tuple[method]]
+end note
+CreatureActions::kind_actions .. annotation
+
+
+class StatesCalculator {
+    +previous: StatesManager
+    -new_body() -> Body
+    -new_mind() -> Mind
+    +new_creature() -> Creature
+}
+StatesCalculator::previous o-- StatesManager
+StatesCalculator --> Creature
+
+
+class Body {
+    -health_ranges: ParamRanges
+    +health: int
+    +stamina: int
+    +hunger: int
+    +thirst: int
+    +tick_changes() -> dict
+}
+Body --o Creature::body
+note as annotation2
+    ParamRanges = tuple[tuple[int, int], ...]
+end note
+annotation2 .. Body::health_ranges
+
+
+class Mind {
+    #{static}patterns: dict
+    +joy: int
+    +anger: int
+    ..properties..
+    +pattern
+    __
+}
+Mind --o Creature::mind
+
+
+class BodyState {
+    +timestamp: dt
+    +health: int
+    +stamina: int
+    +hunger: int
+    +thirst: int
+}
+
+
+class MindState {
+    +timestamp: dt
+    +joy: int
+    +anger: int
+    +pattern
+}
+
+
+class StatesManager {
+    +name: str
+    +birthdate: dt
+    +body_history: list[BodyState]
+    +mind_last: MindState
+}
+
+
+class PersistenceManager {
+    +{static}default_config_path: str | Path
+    +{static}read_file() -> StatesManager
+    +{static}write_file()
+}
+PersistenceManager --> StatesManager
+StatesManager::body_history o-- BodyState
+StatesManager::mind_last o-- MindState
+
+
+@enduml
