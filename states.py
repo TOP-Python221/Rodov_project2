@@ -1,5 +1,7 @@
+from typing import List
 from main import Creature
 import datetime as dt
+
 
 class StateCalculator():
     def __init__(self, previous: 'StatesManager'):
@@ -14,13 +16,14 @@ class StateCalculator():
     def new_creature(self, new_name, new_birthdate):
         self.new_name = new_name
         self.new_birthdate  = new_birthdate
-        return Creature(new_name, new_birthdate, '', '')
+        return Creature(new_name, new_birthdate, self.__new_body(), self.__new_mind())
+
 
 class StatesManager:
     def __init__(self,
                  name: str,
                  birthdate: dt,
-                 body_history: list['BodyState'],
+                 body_history: List['BodyState'],
                  mind_last: 'MindState'):
         self.name = name
         self.birthdate = birthdate
@@ -58,7 +61,6 @@ class MindState:
         self.joy = joy
         self.anger = anger
         self.pattern = pattern
-
 
 
 # тесты:
