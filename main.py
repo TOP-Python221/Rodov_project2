@@ -5,6 +5,7 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from time import perf_counter as pc
 
+
 class Kind(Enum):
     CAT = 1
     DOG = 2
@@ -31,7 +32,8 @@ class Body:
 
     def tick_changes(self) -> dict:
         """Время изменения свойств существа."""
-        if game_loop(): # Если запущен игровой цикл, то высчитываем отсутствие нас количества часов
+        # Если запущен игровой цикл, то высчитываем отсутствие нас количества часов
+        if game_loop():
             start = str(dt.now().hour)
             end_r = open('saves.txt', 'r')
             for _ in end_r:
@@ -43,9 +45,9 @@ class Body:
                     self.stamina -= average
                     self.hunger += average
                     self.thirst += average
-            time.sleep(900) # Знаю, что пока не пройдёт сие количество секунд, то приложение, по сути, не работает.
-            # Пока не имею понятия на данном этапе, как можно реализовать то, что от меня требуется :). Поэтому пока
-            # протоптываю дорожку, чтобы дальше по ней можно было уложить асфальт.
+            # Знаю, что пока не пройдёт сие количество секунд, то приложение, по сути, не работает.
+            # Пока не имею понятия на данном этапе, как можно реализовать то, что от меня требуется :). Поэтому пока протаптываю дорожку, чтобы дальше по ней можно было уложить асфальт.
+            time.sleep(900)
             self.stamina -= 1
             self.hunger += 2
             self.thirst += 2
@@ -56,8 +58,9 @@ class Body:
             file.close()
 
 
-class Creature():
-    def __init__(self, name: str,
+class Creature:
+    def __init__(self,
+                 name: str,
                  birthdate: dt,
                  body: 'Body',
                  mind: 'Mind'):
@@ -68,7 +71,7 @@ class Creature():
 
     @property
     def age(self) -> datetime.timedelta:
-        return (dt.now() - self.__birthdate)
+        return dt.now() - self.__birthdate
 
     def feed(self, food_amount: int):
         self.body.hunger -= food_amount

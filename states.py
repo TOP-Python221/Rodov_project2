@@ -6,7 +6,7 @@ from main import Creature
 import datetime as dt
 
 
-class StateCalculator():
+class StateCalculator:
     def __init__(self, previous: 'StatesManager'):
         self.previous = previous
 
@@ -18,7 +18,7 @@ class StateCalculator():
 
     def new_creature(self, new_name, new_birthdate):
         self.new_name = new_name
-        self.new_birthdate  = new_birthdate
+        self.new_birthdate = new_birthdate
         return Creature(new_name, new_birthdate, self.__new_body(), self.__new_mind())
 
 
@@ -36,7 +36,8 @@ class StatesManager:
 
 class PersistenceManager:
     def __init__(self, default_config_path: str | 'Path'):
-        self.default_config_path = default_config_path #D:\Rodov_project2\Rodov_project2\states.py
+        # D:\Rodov_project2\Rodov_project2\states.py
+        self.default_config_path = default_config_path
 
     def read_file(self):
         file = open('saves.txt', 'r', encoding='utf-8')
@@ -61,7 +62,6 @@ class BodyState:
         self.stamina = stamina
         self.hunger = hunger
         self.thirst = thirst
-
 
 
 class MindState:
