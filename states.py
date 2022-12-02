@@ -1,12 +1,22 @@
 from __future__ import annotations
 
+import datetime
 import pathlib
 from typing import List
-from main import Creature
-import datetime as dt
 
+import datetime as dt
+import json
+
+# saves = {
+#     'health': ((1, 2), (3, 9), (10, 16), (17, 20),),
+#     'stamina': ((1, 3), (4, 10), (11, 17), (18, 20),),
+#     'hunger': ((1), (1), (1), (1),),
+#     'thirst': ((1), (1), (1), (1),),
+#
+# }
 
 class StateCalculator:
+
     def __init__(self, previous: 'StatesManager'):
         self.previous = previous
 
@@ -18,6 +28,7 @@ class StateCalculator:
         pass
 
     def new_creature(self, new_name, new_birthdate):
+        from main import Creature # Избавляет от закальцованного импорта
         self.new_name = new_name
         self.new_birthdate = new_birthdate
         return Creature(new_name, new_birthdate, self.__new_body(), self.__new_mind())
@@ -27,13 +38,23 @@ class StatesManager:
     def __init__(self,
                  name: str,
                  birthdate: dt,
-                 body_history: List['BodyState'],
-                 mind_last: 'MindState'):
+                 ):
         self.name = name
         self.birthdate = birthdate
-        self.body_history = body_history
-        self.mind_last = mind_last
+        self.body_history = List[BodyState]
+        self.mind_last = MindState(1, 1, 1, '')
 
+    def append_history(self) -> List[BodyState]:
+        """Читает json-файл и берёт оттуда значения"""
+        file = PersistenceManager.read_file('property_saves.json')
+        self.body_history = list()
+        saved_history = self.body_history.append(BodyState('1',
+                                                           file['health'][0],
+                                                           file['stamina'][1],
+                                                           file['hunger'][1],
+                                                           file['thirst'][1])
+                                                 )
+        return saved_history
 
 class PersistenceManager:
     def __init__(self, default_config_path: str | 'Path'):
@@ -42,18 +63,19 @@ class PersistenceManager:
 
     # ИСПРАВИТЬ: в этом классе мы обычно прописываем не общие методы "чтения любого файла", а вполне конкретные, например: "читать json файл состояний", "читать ini файл конфигурации" (если такой будет) и так далее
     # КОММЕНТАРИЙ: этот метод, например, должен возвращать объект StatesManager, то есть он читает именно состояния — это как раз случай, когда можно и нужно изменить модель в имени метода
-    def read_file(self):
-        # КОММЕНТАРИЙ: а что случилось с менеджером контекста with?
-        file = open('saves.txt', 'r', encoding='utf-8')
-        # ИСПРАВИТЬ: серьёзно, print()? не сложновато потом из стандартного потока будет доставать интересующие нас данные?
-        print(file.read())
-        file.close()
+    @staticmethod
+    def read_file(filename):
+        """Чтение json файлов"""
+        with open(filename, 'r', encoding='utf-8') as file:
+            l_file = json.load(file)
+            return StatesManager(l_file['name'], l_file['birthday']) #TypeError: 'StatesManager' object is not subscriptable
 
-    def write_file(self, save):
-        file = open('saves.txt', 'w')
-        file.write(save)
-        file.close()
-
+    @staticmethod
+    def write_file(save, filename):
+        save = json.dumps(save)
+        save = json.loads(str(save))
+        with open(filename, 'w', encoding='utf-8') as file:
+            json.dump(save, file, indent=4)
 
 # КОММЕНТАРИЙ: эти два класса никто не использует, им грустно и одиноко — поговорите с ними, вдруг пригодятся
 class BodyState:
@@ -82,10 +104,13 @@ class MindState:
         self.pattern = pattern
 
 
+
+
 # тесты:
 if __name__ == '__main__':
-    PerM = PersistenceManager('D:\Rodov_project2\Rodov_project2\states.py')
-    PerM.read_file()
-    PerM.write_file('check')
-    PerM.read_file()
+    st = StatesManager('', '')
+    print(st.append_history())
 
+    # pm = PersistenceManager('')
+    # # pm.write_file(saves, 'property_saves.json')
+    # print(pm.read_file('property_saves.json'))
