@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+import pathlib
 from typing import List
 from main import Creature
 import datetime as dt
@@ -33,7 +36,17 @@ class StatesManager:
 
 class PersistenceManager:
     def __init__(self, default_config_path: str | 'Path'):
-        self.default_config_path = default_config_path
+        self.default_config_path = default_config_path #D:\Rodov_project2\Rodov_project2\states.py
+
+    def read_file(self):
+        file = open('saves.txt', 'r', encoding='utf-8')
+        print(file.read())
+        file.close()
+
+    def write_file(self, save):
+        file = open('saves.txt', 'w')
+        file.write(save)
+        file.close()
 
 
 class BodyState:
@@ -65,4 +78,8 @@ class MindState:
 
 # тесты:
 if __name__ == '__main__':
-    pass
+    PerM = PersistenceManager('D:\Rodov_project2\Rodov_project2\states.py')
+    PerM.read_file()
+    PerM.write_file('check')
+    PerM.read_file()
+

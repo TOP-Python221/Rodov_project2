@@ -1,3 +1,4 @@
+import time
 from datetime import datetime as dt
 import datetime
 from abc import ABC, abstractmethod
@@ -29,19 +30,30 @@ class Body:
         self.thirst = thirst
 
     def tick_changes(self) -> dict:
-        pass
-
-
-    # @staticmethod # Статический только для тестов
-    def tired(self):
-        """Описывает физическое состояние питомца: устал/не устал"""
-        if dt.today().strftime('%H') > '11': # Это, скорее, для тестов сделано, чтобы посмотреть как работает функции
-            # модуля datetime
-            return 'Ваш питомец устал'
-        return 'Ваш питомец, как огурчик ;D'
-
-    def sleep(self):
-        pass
+        """Время изменения свойств существа."""
+        if game_loop(): # Если запущен игровой цикл, то высчитываем отсутствие нас количества часов
+            start = str(dt.now().hour)
+            end_r = open('saves.txt', 'r')
+            for _ in end_r:
+                if 'end_of_game = ' not in end_r.readline():
+                    end_r.readline()
+                else:
+                    end = int(end_r.read(-1))
+                    average = end - int(start)
+                    self.stamina -= average
+                    self.hunger += average
+                    self.thirst += average
+            time.sleep(900) # Знаю, что пока не пройдёт сие количество секунд, то приложение, по сути, не работает.
+            # Пока не имею понятия на данном этапе, как можно реализовать то, что от меня требуется :). Поэтому пока
+            # протоптываю дорожку, чтобы дальше по ней можно было уложить асфальт.
+            self.stamina -= 1
+            self.hunger += 2
+            self.thirst += 2
+        else:
+            end = str(dt.now().hour)
+            file = open('saves.txt', 'a+')
+            file.write("end_of_game = " + end + '\n')
+            file.close()
 
 
 class Creature():
@@ -86,9 +98,12 @@ class Mind:
         pass
 
 
+def game_loop():
+    return False
 
 
 # тесты:
 if __name__ == '__main__':
-    print(dt.now().minute)
-    print(datetime.time())
+    ex = Body(1, 1, 1, 1, 1)
+    ex.tick_changes()
+
