@@ -10,6 +10,7 @@ class StateCalculator:
     def __init__(self, previous: 'StatesManager'):
         self.previous = previous
 
+    # КОММЕНТАРИЙ: именно эти методы ответственны за вычисления новых мгновенных значений параметров после загрузки данных из файла(-ов) состояний
     def __new_body(self) -> 'Body':
         pass
 
@@ -39,8 +40,12 @@ class PersistenceManager:
         # D:\Rodov_project2\Rodov_project2\states.py
         self.default_config_path = default_config_path
 
+    # ИСПРАВИТЬ: в этом классе мы обычно прописываем не общие методы "чтения любого файла", а вполне конкретные, например: "читать json файл состояний", "читать ini файл конфигурации" (если такой будет) и так далее
+    # КОММЕНТАРИЙ: этот метод, например, должен возвращать объект StatesManager, то есть он читает именно состояния — это как раз случай, когда можно и нужно изменить модель в имени метода
     def read_file(self):
+        # КОММЕНТАРИЙ: а что случилось с менеджером контекста with?
         file = open('saves.txt', 'r', encoding='utf-8')
+        # ИСПРАВИТЬ: серьёзно, print()? не сложновато потом из стандартного потока будет доставать интересующие нас данные?
         print(file.read())
         file.close()
 
@@ -50,6 +55,7 @@ class PersistenceManager:
         file.close()
 
 
+# КОММЕНТАРИЙ: эти два класса никто не использует, им грустно и одиноко — поговорите с ними, вдруг пригодятся
 class BodyState:
     def __init__(self,
                  timestamp: dt,
