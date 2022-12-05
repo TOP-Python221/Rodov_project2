@@ -12,6 +12,8 @@
 
 legend top left
     from datetime import datetime as dt
+
+    ParamRanges = Sequence[Annotated[Sequence[int], 2]]
 end legend
 
 
@@ -30,7 +32,7 @@ enum Kind {
 
 
 class Creature {
-    +kind: Kind
+    +kind: KindParameters
     +name: str
     +birthdate: dt
     +body: Body
@@ -38,12 +40,14 @@ class Creature {
     ..properties..
     +age
     __
+    +apply_tick_changes()
     +feed()
     +play()
     +talk()
+    +clean()
 }
 Creature <|-- CreatureActions
-Creature::kind o-- Kind
+Creature::kind o-- KindParameters
 
 
 class CreatureActions {
@@ -55,43 +59,44 @@ class CreatureActions {
     {method}...
 }
 note as annotation
-    KindActions = dict[Kind, tuple[method]]
+    KindActions = dict[Kind, Sequence[Callable]]
 end note
 CreatureActions::kind_actions .. annotation
 
 
 class StatesCalculator {
-    +previous: StatesManager
-    -new_body() -> Body
-    -new_mind() -> Mind
-    +new_creature() -> Creature
+    +last: StatesManager
+    -revive_body() -> Body
+    -revive_mind() -> Mind
+    +revive_creature() -> Creature
+    {method}<i>?? новорождённое существо ??</i>
 }
-StatesCalculator::previous o-- StatesManager
+StatesCalculator::last o-- StatesManager
 StatesCalculator --> Creature
+StatesCalculator <.. KindParameters
 
 
 class Body {
-    -health_ranges: ParamRanges
     +health: int
     +stamina: int
     +hunger: int
     +thirst: int
-    +tick_changes() -> dict
+    +intestine: int
+    +tick_changes(\n\tparameters: dict\n\t\t\t) -> dict
 }
 Body --o Creature::body
-note as annotation2
-    ParamRanges = tuple[tuple[int, int], ...]
-end note
-annotation2 .. Body::health_ranges
 
 
 class Mind {
     #{static}patterns: dict
     +joy: int
+    +activity: float
     +anger: int
+    +anxiety: float
     ..properties..
     +pattern
     __
+    +tick_changes(\n\tparameters: dict\n\t\t\t) -> dict
 }
 Mind --o Creature::mind
 
@@ -102,6 +107,7 @@ class BodyState {
     +stamina: int
     +hunger: int
     +thirst: int
+    +to_dict()
 }
 
 
@@ -110,25 +116,57 @@ class MindState {
     +joy: int
     +anger: int
     +pattern
+    +to_dict()
 }
 
 
 class StatesManager {
+    +kind: Kind
     +name: str
     +birthdate: dt
-    +body_history: list[BodyState]
+    +body_last: BodyState
     +mind_last: MindState
+    +to_dict()
+    {method}<i>?? новорождённое существо ??</i>
+}
+StatesManager::kind o-- Kind
+StatesManager::mind_last o-- MindState
+StatesManager::body_history o-- BodyState
+
+
+class KindParameters {
+    +title: str
+    +maturity: tuple
+    +egg: Ranges
+    +cub: Ranges
+    +young: Ranges
+    +adult: Ranges
+    +elder: Ranges
+    <i>!!! включить влияния</i>
+    <i>и коэффициенты !!!</i>
+    +age_ranges() -> Ranges
+}
+KindParameters *-- "сильная" Ranges
+
+
+hide Ranges empty methods
+class Ranges {
+    +health: ParamRanges,
+    +stamina: ParamRanges,
+    +hunger: ParamRanges,
+    +thirst: ParamRanges
 }
 
 
 class PersistenceManager {
-    +{static}default_config_path: str | Path
-    +{static}read_file() -> StatesManager
-    +{static}write_file()
+    +{static}default_ranges_path: str | Path
+    +{static}default_states_path: str | Path
+    +{static}read_ranges() -> KindParameters
+    +{static}read_states() -> StatesManager
+    +{static}write_states()
 }
 PersistenceManager --> StatesManager
-StatesManager::body_history o-- BodyState
-StatesManager::mind_last o-- MindState
+PersistenceManager --> KindParameters
 
 
 @enduml

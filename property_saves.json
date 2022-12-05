@@ -1,56 +1,69 @@
 {
-    "name": [
-       "Barsik"
-    ],
-    "birthday": [
-        "19.02.2020"
-    ],
-    "health": [
-        [
-            1,
-            2
-        ],
-        [
-            3,
-            9
-        ],
-        [
-            10,
-            16
-        ],
-        [
-            17,
-            20
-        ]
-    ],
-    "stamina": [
-        [
-            1,
-            3
-        ],
-        [
-            4,
-            10
-        ],
-        [
-            11,
-            17
-        ],
-        [
-            18,
-            20
-        ]
-    ],
-    "hunger": [
-        1,
-        1,
-        1,
-        1
-    ],
-    "thirst": [
-        1,
-        1,
-        1,
-        1
-    ]
+  "cat": {
+    "title": "кот",
+    "birthday": "19.02.2001",
+    "maturation": [2, 9, 39],
+    "ranges": {
+      "cub": {
+        "health": [[1,1], [2,6], [7,19], [20,20]],
+        "stamina": [[0,0], [1,9], [10,15]],
+        "hunger": [[30,30], [29,26], [25,12], [11,6], [5,0]],
+        "thirst": [[30,30], [29,21], [20,7], [6,0]]
+      },
+      "young": {
+        "health": [[]],
+        "stamina": [],
+        "hunger": [],
+        "thirst": []
+      },
+      "adult": {
+        "health": [],
+        "stamina": [],
+        "hunger": [],
+        "thirst": []
+      },
+      "elder": {
+        "health": [],
+        "stamina": [],
+        "hunger": [],
+        "thirst": []
+      }
+    }
+  },
+  "turtle": {
+    "title": "черепаха",
+    "maturation": [2, 10, 22, 47],
+    "ranges": {
+      "egg": {
+        "health": [],
+        "stamina": [],
+        "hunger": [],
+        "thirst": []
+      },
+      "cub": {
+        "health": [[1,1], [2,13], [14,29], [30,30]],
+        "stamina": [],
+        "hunger": [],
+        "thirst": []
+      },
+      "young": {
+        "health": [],
+        "stamina": [],
+        "hunger": [],
+        "thirst": []
+      },
+      "adult": {
+        "health": [],
+        "stamina": [],
+        "hunger": [],
+        "thirst": []
+      },
+      "elder": {
+        "health": [],
+        "stamina": [],
+        "hunger": [],
+        "thirst": []
+      }
+    }
+  }
 }

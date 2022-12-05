@@ -39,18 +39,7 @@ class Body:
     # ОТВЕТИТЬ: зачем на диаграмме мы аннотировали возвращаемое значение этого метода словарём?
     def tick_changes(self) -> dict: # Решил пока отложить реализацию метода
         """Время изменения свойств существа."""
-        # start = dt.now().strftime('%H:%M')
-        # states.PersistenceManager.write_file(start, 'time_saves.json')
-        # states.PersistenceManager.read_file('time_saves.json')
-        # time_delta = dt.now()
-        # print(time_delta)
-        # print(states.PersistenceManager.read_file('time_saves.json'))
 
-        # with open('property_saves.json', 'w+') as json_file:
-        #     property = json.load(json_file)
-        #     print(property, type(property))
-        #     property['time'] = dt.now().strftime('%H/%M')
-        #     new_property = json.dump(property, json_file)
 
         # ИСПРАВИТЬ: в чём для этого метода заключается разница между состояниями "запущен игровой цикл" и "не запущен"?
         # Если запущен игровой цикл, то высчитываем отсутствие нас количества часов
@@ -97,6 +86,15 @@ class Creature:
     @property
     def age(self) -> datetime.timedelta:
         return dt.now() - self.__birthdate
+
+    def apply_changes(self):
+        for state in (self.mind, self.body):
+            for attr, delta in state.tick_changes().items():
+                new_value = getattr(self.mind, attr) + delta
+                setattr(self.mind, attr, new_value)
+            for attr, delta in state.tick_changes().items():
+                new_value = getattr(self.body, attr) + delta
+                setattr(self.body, attr, new_value)
 
     def feed(self, food_amount: int):
         self.body.hunger -= food_amount
