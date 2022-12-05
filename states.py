@@ -3,7 +3,7 @@ from __future__ import annotations
 import datetime
 import pathlib
 from typing import List
-
+import main
 import datetime as dt
 import json
 
@@ -21,10 +21,10 @@ class StateCalculator:
         self.previous = previous
 
     # КОММЕНТАРИЙ: именно эти методы ответственны за вычисления новых мгновенных значений параметров после загрузки данных из файла(-ов) состояний
-    def __new_body(self) -> 'Body':
+    def __new_body(self) -> main.Body:
         pass
 
-    def __new_mind(self) -> 'Mind':
+    def __new_mind(self) -> main.Mind:
         pass
 
     def new_creature(self, new_name, new_birthdate):
@@ -36,25 +36,17 @@ class StateCalculator:
 
 class StatesManager:
     def __init__(self,
+                 kind: main.Kind,
                  name: str,
                  birthdate: dt,
                  ):
+        self.kind = kind
         self.name = name
         self.birthdate = birthdate
-        self.body_history = List[BodyState]
-        self.mind_last = MindState(1, 1, 1, '')
+        self.body_last = BodyState('timestamp', 1, 1, 1, 1)
+        self.mind_last = MindState(1, 1, 1, 'pattern')
 
-    def append_history(self) -> List[BodyState]:
-        """Читает json-файл и берёт оттуда значения"""
-        file = PersistenceManager.read_file('property_saves.json')
-        self.body_history = list()
-        saved_history = self.body_history.append(BodyState('1',
-                                                           file['health'][0],
-                                                           file['stamina'][1],
-                                                           file['hunger'][1],
-                                                           file['thirst'][1])
-                                                 )
-        return saved_history
+
 
 class PersistenceManager:
     def __init__(self, default_config_path: str | 'Path'):
@@ -67,8 +59,10 @@ class PersistenceManager:
     def read_file(filename):
         """Чтение json файлов"""
         with open(filename, 'r', encoding='utf-8') as file:
-            l_file = json.load(file)
-            return StatesManager(l_file['name'], l_file['birthday']) #TypeError: 'StatesManager' object is not subscriptable
+            load_file = json.load(file)
+            name = load_file['cat']['title']
+            birthday = load_file['cat']['birthday']
+            return StatesManager(main.Kind.CAT, name, birthday)
 
     @staticmethod
     def write_file(save, filename):
@@ -104,12 +98,44 @@ class MindState:
         self.pattern = pattern
 
 
+class KindParameters:
+    def __init__(self,
+                 title: str,
+                 maturity: tuple,
+                 egg: Ranges,
+                 cub: Ranges,
+                 yong: Ranges,
+                 adult: Ranges,
+                 elder: Ranges):
+        self.title = title
+        self.maturity = maturity
+        self.egg = egg
+        self.cub = cub
+        self.yong = yong
+        self.adult = adult
+        self.elder = elder
+
+    def age_ranges(self) -> Ranges:
+        pass
+
+
+class Ranges:
+    def __init__(self,
+                 health: 'ParamRanges',
+                 stamina: 'ParamRanges',
+                 hunger: 'ParamRanges',
+                 thirst: 'ParamRanges',
+                 ):
+        self.health = health
+        self.stamina = stamina
+        self.hunger = hunger
+        self.thirst = thirst
 
 
 # тесты:
 if __name__ == '__main__':
-    st = StatesManager('', '')
-    print(st.append_history())
+    st = StatesManager('', '', '')
+    print(st)
 
     # pm = PersistenceManager('')
     # # pm.write_file(saves, 'property_saves.json')
