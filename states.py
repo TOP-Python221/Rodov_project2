@@ -39,12 +39,14 @@ class StatesManager:
                  kind: main.Kind,
                  name: str,
                  birthdate: dt,
+                 body_last: BodyState,
+                 mind_last: MindState,
                  ):
         self.kind = kind
         self.name = name
         self.birthdate = birthdate
-        self.body_last = BodyState('timestamp', 1, 1, 1, 1)
-        self.mind_last = MindState(1, 1, 1, 'pattern')
+        self.body_last = body_last
+        self.mind_last = mind_last
 
 
 
