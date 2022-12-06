@@ -2,6 +2,7 @@
 from enum import Enum
 from pathlib import Path
 from sys import path
+from typing import Union, Tuple
 
 
 class Kind(Enum):
@@ -19,5 +20,5 @@ BASE_DIR = Path(path[0])
 
 
 # переменные типов для аннотации
-pathlike = str | Path
-ParamRanges = tuple[tuple[int, int], ...]
+pathlike = Union[str, Path]
+ParamRanges = Tuple[Tuple[int, int], ...]

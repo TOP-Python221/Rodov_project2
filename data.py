@@ -46,5 +46,5 @@ class PersistenceManager:
 if __name__ == '__main__':
     sm = PersistenceManager.read_states()
     print(sm.__dict__, end='\n\n')
-    print(sm.body.__dict__, end='\n\n')
-    print(sm.mind.__dict__, end='\n\n')
+    print(sm.body_last.__dict__, end='\n\n')
+    print(sm.mind_last.__dict__, end='\n\n')
