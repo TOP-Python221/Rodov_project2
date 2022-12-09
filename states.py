@@ -10,20 +10,18 @@ import creature
 import constants
 
 
-class Ranges:
-    def __init__(self,
-                 health: 'ParamRanges',
-                 stamina: 'ParamRanges',
-                 hunger: 'ParamRanges',
-                 thirst: 'ParamRanges',
-                 ):
-        self.health = health
-        self.stamina = stamina
-        self.hunger = hunger
-        self.thirst = thirst
-
-
 class KindParameters:
+    class Ranges:
+        def __init__(self,
+                     health: 'ParamRanges',
+                     stamina: 'ParamRanges',
+                     hunger: 'ParamRanges',
+                     thirst: 'ParamRanges'):
+            self.health = health
+            self.stamina = stamina
+            self.hunger = hunger
+            self.thirst = thirst
+
     def __init__(self,
                  title: str,
                  maturity: tuple,
@@ -156,46 +154,11 @@ class StateCalculator:
         return creature.Creature(revive_name, revive_birthdate, self.__revive_body(), self.__revive_mind())
 
 
-class KindParameters:
-    class Ranges:
-        def __init__(self,
-                     health: 'ParamRanges',
-                     stamina: 'ParamRanges',
-                     hunger: 'ParamRanges',
-                     thirst: 'ParamRanges'):
-            self.health = health
-            self.stamina = stamina
-            self.hunger = hunger
-            self.thirst = thirst
-
-    def __init__(self,
-                 title: str,
-                 maturity: tuple,
-                 egg: Ranges,
-                 cub: Ranges,
-                 yong: Ranges,
-                 adult: Ranges,
-                 elder: Ranges):
-        self.title = title
-        self.maturity = maturity
-        self.egg = egg
-        self.cub = cub
-        self.yong = yong
-        self.adult = adult
-        self.elder = elder
-
-    def age_ranges(self) -> Ranges:
-        pass
-
-
-
-
 # тесты:
 if __name__ == '__main__':
-    st = StatesManager('andrey', '','', '', '')
+    """"""
+    # st = StatesManager('andrey', '','', '', '')
     # save = st.to_dict()
-
-
     # pm = PersistenceManager('')
     # # pm.write_file(saves, 'property_saves.json')
     # print(pm.read_file('property_saves.json'))
