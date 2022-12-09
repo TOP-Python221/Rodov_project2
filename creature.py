@@ -1,8 +1,10 @@
 # импорт из стандартной библиотеки
 from datetime import datetime as dt, timedelta as td
+from typing import Dict
 
 # импорт дополнительных модулей
 import constants
+import data
 
 
 class Body:
@@ -22,7 +24,9 @@ class Body:
     # Решил пока отложить реализацию метода
     def tick_changes(self) -> dict:
         """Вычисляет и возвращает словарь с изменениями параметров питомца, которые должны быть применены по прошествии очередного субъективного часа."""
-
+        health = getattr(data.PersistenceManager.read_states().mind_last, 'health')
+        print(health)
+        # print(data.PersistenceManager.read_states().mind_last.__dict__)
 
 class Mind:
     """
@@ -80,7 +84,29 @@ class Creature:
         self.mind.anger -= enjoy_amount
 
     def talk(self, conver_amount):
-        self.mind.anger += conver_amount
+        self.mind.anger -= conver_amount
         self.mind.joy += conver_amount
 
+    def clean(self, clean_amount):
+        self.mind.anger -= clean_amount
 
+
+class CreatureActions(Creature):
+    def __init__(self, name, birthdate,
+                 body_obj, mind_obj,
+                 kind_actions = Dict[constants.Kind, 'Sequence[Callable]']):
+        super().__init__(name, birthdate, body_obj, mind_obj)
+        self.kind_actions = kind_actions
+
+    def seek_for_honey(self):
+        return "Ваш питомец ищет вкусняшку =^_^="
+
+    def be_a_cat(self):
+        return "Ваша кошка делает 'тыгыдык' 0_o"
+
+    def be_a_naughty_cat(self):
+        return "Ваша кошка сдирает диван >:X"
+
+if __name__ == '__main__':
+    bd = Body('','','','')
+    bd.tick_changes()
