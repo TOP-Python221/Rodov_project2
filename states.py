@@ -1,5 +1,5 @@
-from __future__ import annotations
 # импорт из стандартной библиотеки
+from __future__ import annotations
 import datetime
 from datetime import datetime as dt
 from dataclasses import dataclass
@@ -8,15 +8,7 @@ import json
 # импорт дополнительных модулей
 import creature
 import constants
-
-
-# saves = {
-#     'health': ((1, 2), (3, 9), (10, 16), (17, 20),),
-#     'stamina': ((1, 3), (4, 10), (11, 17), (18, 20),),
-#     'hunger': ((1), (1), (1), (1),),
-#     'thirst': ((1), (1), (1), (1),),
-#
-# }
+import data
 
 
 class Ranges:
@@ -128,47 +120,26 @@ class StateCalculator:
 
     # КОММЕНТАРИЙ: именно эти методы ответственны за вычисления новых мгновенных значений параметров после загрузки данных из файла(-ов) состояний
     def __revive_body(self) -> creature.Body:
-        pass
+        """Вычисляет мгновенные значения параметров Body после загрузки данных из файлов состояний"""
+        body_states = data.PersistenceManager.read_states()
+        return creature.Body(body_states.body_last.health,
+                             body_states.body_last.stamina,
+                             body_states.body_last.hunger,
+                             body_states.body_last.thirst)
 
     def __revive_mind(self) -> creature.Mind:
-        pass
+        """Вычисляет мгновенные значения параметров Mind после загрузки данных из файлов состояний"""
+        mind_states = data.PersistenceManager.read_states()
+        return creature.Body(mind_states.mind_last.pattern,
+                             mind_states.mind_last.joy,
+                             mind_states.mind_last.anger,
+                             mind_states.mind_last.timestamp)
 
-    def new_creature(self, revive_name, revive_birthdate):
-        # from main import Creature  # Избавляет от закальцованного импорта
+    def revive_creature(self, revive_name, revive_birthdate):
+        """Считывает последние состояния Mind, Body зверька и возвращает новые значения"""
         self.revive_name = revive_name
         self.revive_birthdate = revive_birthdate
         return creature.Creature(revive_name, revive_birthdate, self.__revive_body(), self.__revive_mind())
-
-
-# class PersistenceManager:
-#     def __init__(self, default_config_path: str | 'Path'):
-#         # D:\Rodov_project2\Rodov_project2\states.py
-#         self.default_config_path = default_config_path
-#
-#     @staticmethod
-#     def read_file(filename):
-#         """Чтение json файлов"""
-#         with open(filename, 'r', encoding='utf-8') as file:
-#             load_file = json.load(file)
-#             name_list = []
-#             birthday_list = []
-#             for value in load_file.values():
-#                 name_list.append(value['name'])
-#                 birthday_list.append(value['birthday'])
-#             return StatesManager(main.Kind.CAT, name_list, birthday_list, '', '')
-#
-#     @staticmethod
-#     def write_file(file_name, prop_name: str, prop_value='None'):
-#         with open(file_name, "r") as file:
-#             data = json.load(file)
-#
-#         data[prop_name] = prop_value
-#
-#         with open(file_name, "w") as file:
-#             json.dump(data, file, indent=2)
-
-# КОММЕНТАРИЙ: эти два класса никто не использует, им грустно и одиноко — поговорите с ними, вдруг пригодятся
-
 
 
 class KindParameters:
@@ -196,8 +167,8 @@ class KindParameters:
 
 # тесты:
 if __name__ == '__main__':
-    st = StatesManager('', '', '', '', '')
-    print(st)
+    st = StateCalculator('')
+    print(st.revive_body())
 
     # pm = PersistenceManager('')
     # # pm.write_file(saves, 'property_saves.json')
