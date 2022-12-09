@@ -140,6 +140,8 @@ class StateCalculator:
                           'fox - лиса, fox - лиса, bear - медведь, snake - змея, lizard - ящерица) >>> ').lower()
         self.name = input('Введите имя питомца >>> ').lower()
         self.birhdate = input('Дата рождения Вашего питомца(Г.М.Д) >>> ')
+        # new_creat = data.PersistenceManager.write_states() Где-то здесь должны быть занесены данные в json-файл о
+        # зверьке
         return creature.Creature(self.name, self.birhdate, self.body, self.mind, self.kind)
 
     def __revive_body(self) -> creature.Body:
