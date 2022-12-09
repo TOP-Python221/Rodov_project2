@@ -1,6 +1,8 @@
 # импорт из стандартной библиотеки
+import datetime
 from datetime import datetime as dt, timedelta as td
 from typing import Dict
+from time import perf_counter as pc
 
 # импорт дополнительных модулей
 import constants
@@ -21,12 +23,22 @@ class Body:
         self.hunger = hunger
         self.thirst = thirst
 
-    # Решил пока отложить реализацию метода
+    # Пока не знаю как реализовать этот метод. :`(
     def tick_changes(self) -> dict:
         """Вычисляет и возвращает словарь с изменениями параметров питомца, которые должны быть применены по прошествии очередного субъективного часа."""
         health = getattr(data.PersistenceManager.read_states().mind_last, 'health')
-        print(health)
-        # print(data.PersistenceManager.read_states().mind_last.__dict__)
+        stamina = getattr(data.PersistenceManager.read_states().mind_last, 'stamina')
+        hunger = getattr(data.PersistenceManager.read_states().mind_last, 'hunger')
+        thirst = getattr(data.PersistenceManager.read_states().mind_last, 'thirst')
+        delta = datetime.datetime.today()
+        # Условно говоря, по прошествию 15 минут...
+        delta = delta+datetime.timedelta(minutes=15)
+        #... происходят следующие изменения
+        return {'health': health - 1,
+                'stamina': stamina -1,
+                'hunger': hunger + 3,
+                'thirst': thirst + 4}
+
 
 class Mind:
     """
@@ -45,6 +57,21 @@ class Mind:
     @property
     def pattern(self):
         pass
+
+    def tick_changes(self) -> dict:
+        """Вычисляет и возвращает словарь с изменениями параметров питомца, которые должны быть применены по прошествии очередного субъективного часа."""
+        joy = getattr(data.PersistenceManager.read_states().body_last, 'joy')
+        activity = getattr(data.PersistenceManager.read_states().body_last, 'activity')
+        anger = getattr(data.PersistenceManager.read_states().body_last, 'anger')
+        anxiety = getattr(data.PersistenceManager.read_states().body_last, 'anxiety')
+        delta = datetime.datetime.today()
+        # Условно говоря, по прошествию 15 минут...
+        delta = delta+datetime.timedelta(minutes=15)
+        #... происходят следующие изменения
+        return {'joy': joy - 3,
+                'activity': activity - 1,
+                'anger': anger + 2,
+                'anxiety': anxiety + 4}
 
 
 class Creature:
@@ -110,5 +137,5 @@ class CreatureActions(Creature):
         return "Ваша кошка сдирает диван >:X"
 
 if __name__ == '__main__':
-    bd = Body('','','','')
-    bd.tick_changes()
+    md = Mind('','','')
+    print(md.tick_changes())
