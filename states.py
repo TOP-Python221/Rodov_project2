@@ -8,7 +8,6 @@ import json
 # импорт дополнительных модулей
 import creature
 import constants
-import data
 
 
 class Ranges:
@@ -53,20 +52,21 @@ class BodyState:
                  hunger: int,
                  thirst: int,
                  intestine: int):
-        self.timestamp = timestamp
+        # self.timestamp = datetime.datetime.timestamp()
         self.health = health
         self.stamina = stamina
         self.hunger = hunger
         self.thirst = thirst
         self.intestine = intestine
 
-    def to_dict(self) -> dict:
-        self.timestamp = dt
-        self.health = 'health'
-        self.stamina = 'stamina'
-        self.hunger = 'hunger'
-        self.thirst = 'thirst'
-        return {self.timestamp: datetime.datetime.now(), self.health: 1, self.stamina: 2, self.hunger: 3, self.thirst: 4}
+    def to_dict(self):
+        body_dictionary = {'timestamp': self.timestamp,
+                      'health': self.health,
+                      'stamina': self.stamina,
+                      'hunger': self.hunger,
+                      'thirst': self.thirst,
+                      'intestine': self.intestine}
+        return body_dictionary
 
 
 class MindState:
@@ -78,47 +78,61 @@ class MindState:
                  anxiety: float):
         self.anxiety = anxiety
         self.activity = activity
-        self.timestamp = timestamp
+        # self.timestamp = datetime.datetime.timestamp()
         self.joy = joy
         self.anger = anger
         # self.pattern = pattern
 
-    def to_dict(self) -> dict:
-        self.timestamp = dt
-        self.joy = 'joy'
-        self.anger = 'anger'
-        self.pattern = 'pattern'
-        return {self.timestamp: datetime.datetime.now(), self.joy: 1, self.anger: 2, self.pattern: '', }
+    def to_dict(self):
+        mind_dictionary = {'timestamp': self.timestamp,
+                      'joy': self.joy,
+                      'activity': self.activity,
+                      'anger': self.anger,
+                      'anxiety': self.anxiety}
+        return mind_dictionary
 
 
 class StatesManager:
     def __init__(self,
-                 kind: creature.Kind,
+                 kind: constants.Kind,
                  name: str,
                  birthdate: dt,
-                 body_last: BodyState,
                  mind_last: MindState,
-                 ):
+                 body_last: BodyState):
         self.kind = kind
         self.name = name
         self.birthdate = birthdate
         self.body_last = body_last
         self.mind_last = mind_last
 
+    def to_dict(self):
+        dictionary = {'kind': self.kind,
+                      'name': self.name,
+                      'birthdate': self.birthdate,
+                      'body_last': self.body_last,
+                      'mind_last': self.mind_last}
+        return dictionary
 
+
+import data # Избавляет от 'circular import'
 class StateCalculator:
+
     def __init__(self, last: 'StatesManager'):
         self.last = last
 
-    def creat_creature(self,
-                       kind: 'Kind',
-                       name: str,
-                       birhdate: dt,
-                       body: creature.Body,
-                       mind: creature.Mind) -> creature.Creature:
-        pass
+    # ========== Отложил реализацию ==========
+    # def creat_new_creature(self,
+    #                    kind: 'Kind',
+    #                    name: str,
+    #                    birhdate: dt,
+    #                    body: creature.Body,
+    #                    mind: creature.Mind) -> creature.Creature:
+    #     """Создаёт нового зверька"""
+    #     # print(constants.BASE_DIR / 'states.json')
+    #     save = constants.BASE_DIR / 'states.json'
+    #     if not save:
+    #         data.PersistenceManager.write_states()
 
-    # КОММЕНТАРИЙ: именно эти методы ответственны за вычисления новых мгновенных значений параметров после загрузки данных из файла(-ов) состояний
     def __revive_body(self) -> creature.Body:
         """Вычисляет мгновенные значения параметров Body после загрузки данных из файлов состояний"""
         body_states = data.PersistenceManager.read_states()
@@ -130,7 +144,7 @@ class StateCalculator:
     def __revive_mind(self) -> creature.Mind:
         """Вычисляет мгновенные значения параметров Mind после загрузки данных из файлов состояний"""
         mind_states = data.PersistenceManager.read_states()
-        return creature.Body(mind_states.mind_last.pattern,
+        return creature.Mind(mind_states.mind_last.pattern,
                              mind_states.mind_last.joy,
                              mind_states.mind_last.anger,
                              mind_states.mind_last.timestamp)
@@ -143,6 +157,17 @@ class StateCalculator:
 
 
 class KindParameters:
+    class Ranges:
+        def __init__(self,
+                     health: 'ParamRanges',
+                     stamina: 'ParamRanges',
+                     hunger: 'ParamRanges',
+                     thirst: 'ParamRanges'):
+            self.health = health
+            self.stamina = stamina
+            self.hunger = hunger
+            self.thirst = thirst
+
     def __init__(self,
                  title: str,
                  maturity: tuple,
@@ -167,8 +192,9 @@ class KindParameters:
 
 # тесты:
 if __name__ == '__main__':
-    st = StateCalculator('')
-    print(st.revive_body())
+    st = StatesManager('andrey', '','', '', '')
+    # save = st.to_dict()
+
 
     # pm = PersistenceManager('')
     # # pm.write_file(saves, 'property_saves.json')
