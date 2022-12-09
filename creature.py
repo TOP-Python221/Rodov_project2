@@ -65,7 +65,8 @@ class Creature:
     def age(self) -> td:
         return dt.now() - self.__birthdate
 
-    def apply_changes(self):
+    def apply_changes(self) -> None:
+        """Принимает значения атрибутов от функции tick_changes"""
         for state in (self.mind, self.body):
             for attr, delta in state.tick_changes().items():
                 new_value = getattr(self.mind, attr) + delta
@@ -74,37 +75,38 @@ class Creature:
                 new_value = getattr(self.body, attr) + delta
                 setattr(self.body, attr, new_value)
 
-    def feed(self, food_amount: int):
+    def feed(self, food_amount: int) -> None:
         self.body.hunger -= food_amount
         self.mind.anger -= food_amount
 
-    def play(self, enjoy_amount: int):
+    def play(self, enjoy_amount: int) -> None:
         self.body.stamina -= enjoy_amount
         self.mind.joy += enjoy_amount
         self.mind.anger -= enjoy_amount
 
-    def talk(self, conver_amount):
+    def talk(self, conver_amount) -> None:
         self.mind.anger -= conver_amount
         self.mind.joy += conver_amount
 
-    def clean(self, clean_amount):
+    def clean(self, clean_amount) -> None:
         self.mind.anger -= clean_amount
 
 
 class CreatureActions(Creature):
+    """Класс-контейнер для функций-активностей для зверька"""
     def __init__(self, name, birthdate,
                  body_obj, mind_obj,
                  kind_actions = Dict[constants.Kind, 'Sequence[Callable]']):
         super().__init__(name, birthdate, body_obj, mind_obj)
         self.kind_actions = kind_actions
 
-    def seek_for_honey(self):
+    def seek_for_honey(self) -> str:
         return "Ваш питомец ищет вкусняшку =^_^="
 
-    def be_a_cat(self):
+    def be_a_cat(self) -> str:
         return "Ваша кошка делает 'тыгыдык' 0_o"
 
-    def be_a_naughty_cat(self):
+    def be_a_naughty_cat(self) -> str:
         return "Ваша кошка сдирает диван >:X"
 
 if __name__ == '__main__':

@@ -11,6 +11,7 @@ import constants
 
 
 class KindParameters:
+    """Композиция. Описывает диапазоны состояний."""
     class Ranges:
         def __init__(self,
                      health: 'ParamRanges',
@@ -43,6 +44,7 @@ class KindParameters:
 
 
 class BodyState:
+    """Описывает состояние физических параметров """
     def __init__(self,
                  timestamp: dt,
                  health: int,
@@ -57,7 +59,8 @@ class BodyState:
         self.thirst = thirst
         self.intestine = intestine
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
+        # Записывает физичкские зверька атрибуты в словарь
         body_dictionary = {'timestamp': self.timestamp,
                       'health': self.health,
                       'stamina': self.stamina,
@@ -82,6 +85,7 @@ class MindState:
         # self.pattern = pattern
 
     def to_dict(self):
+        # Записывает моральные/ментальные зверька атрибуты в словарь
         mind_dictionary = {'timestamp': self.timestamp,
                       'joy': self.joy,
                       'activity': self.activity,
@@ -91,6 +95,7 @@ class MindState:
 
 
 class StatesManager:
+    """Руководит всеми атрибутами, состояниями зверька"""
     def __init__(self,
                  kind: constants.Kind,
                  name: str,
@@ -103,7 +108,7 @@ class StatesManager:
         self.body_last = body_last
         self.mind_last = mind_last
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         dictionary = {'kind': self.kind,
                       'name': self.name,
                       'birthdate': self.birthdate,
@@ -114,7 +119,7 @@ class StatesManager:
 
 import data # Избавляет от 'circular import'
 class StateCalculator:
-
+    """Расчитывает состояние зверька"""
     def __init__(self, last: 'StatesManager'):
         self.last = last
 
@@ -126,7 +131,6 @@ class StateCalculator:
     #                    body: creature.Body,
     #                    mind: creature.Mind) -> creature.Creature:
     #     """Создаёт нового зверька"""
-    #     # print(constants.BASE_DIR / 'states.json')
     #     save = constants.BASE_DIR / 'states.json'
     #     if not save:
     #         data.PersistenceManager.write_states()
@@ -147,7 +151,7 @@ class StateCalculator:
                              mind_states.mind_last.anger,
                              mind_states.mind_last.timestamp)
 
-    def revive_creature(self, revive_name, revive_birthdate):
+    def revive_creature(self, revive_name, revive_birthdate) -> creature.Creature:
         """Считывает последние состояния Mind, Body зверька и возвращает новые значения"""
         self.revive_name = revive_name
         self.revive_birthdate = revive_birthdate
