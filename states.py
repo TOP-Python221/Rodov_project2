@@ -4,6 +4,7 @@ import datetime
 from datetime import datetime as dt
 from dataclasses import dataclass
 import json
+from random import randrange as rr
 
 # импорт дополнительных модулей
 import creature
@@ -124,43 +125,52 @@ class StateCalculator:
         self.last = last
 
     # ========== Отложил реализацию ==========
-    # def creat_new_creature(self,
-    #                    kind: 'Kind',
-    #                    name: str,
-    #                    birhdate: dt,
-    #                    body: creature.Body,
-    #                    mind: creature.Mind) -> creature.Creature:
-    #     """Создаёт нового зверька"""
-    #     save = constants.BASE_DIR / 'states.json'
-    #     if not save:
-    #         data.PersistenceManager.write_states()
+    def creat_new_creature(self,
+                       kind: constants.Kind,
+                       name: str,
+                       birhdate: dt) -> creature.Creature:
+        """Создаёт нового зверька"""
+        self.kind = kind
+        self.name = name
+        self.birhdate = birhdate
+        self.body = creature.Body(rr(1, 6),rr(-1, 4), rr(-3, 5), rr(-3, 5)) # Так как питомец новый - интереса ради
+        # рандом распределит параметры для зверька
+        self.mind = creature.Mind(rr(-4, 4), rr(-3, 4))
+        self.kind = input('Введите один из доступных видов питомцев(cat - кот, dog - собака, '
+                          'fox - лиса, fox - лиса, bear - медведь, snake - змея, lizard - ящерица) >>> ').lower()
+        self.name = input('Введите имя питомца >>> ').lower()
+        self.birhdate = input('Дата рождения Вашего питомца(Г.М.Д) >>> ')
+        return creature.Creature(self.name, self.birhdate, self.body, self.mind, self.kind)
 
     def __revive_body(self) -> creature.Body:
         """Вычисляет мгновенные значения параметров Body после загрузки данных из файлов состояний"""
         body_states = data.PersistenceManager.read_states()
-        return creature.Body(body_states.body_last.health,
-                             body_states.body_last.stamina,
-                             body_states.body_last.hunger,
-                             body_states.body_last.thirst)
+        return creature.Body(body_states.mind_last.health,
+                             body_states.mind_last.stamina,
+                             body_states.mind_last.hunger,
+                             body_states.mind_last.thirst)
 
     def __revive_mind(self) -> creature.Mind:
         """Вычисляет мгновенные значения параметров Mind после загрузки данных из файлов состояний"""
         mind_states = data.PersistenceManager.read_states()
-        return creature.Mind(mind_states.mind_last.pattern,
-                             mind_states.mind_last.joy,
-                             mind_states.mind_last.anger,
-                             mind_states.mind_last.timestamp)
+        return creature.Mind(mind_states.body_last.anxiety,
+                             mind_states.body_last.joy,
+                             mind_states.body_last.anger,
+                             )
 
-    def revive_creature(self, revive_name, revive_birthdate) -> creature.Creature:
+    def revive_creature(self) -> creature.Creature:
         """Считывает последние состояния Mind, Body зверька и возвращает новые значения"""
-        self.revive_name = revive_name
-        self.revive_birthdate = revive_birthdate
-        return creature.Creature(revive_name, revive_birthdate, self.__revive_body(), self.__revive_mind())
+        self.revive_name = data.PersistenceManager.read_states().name
+        self.revive_birthdate = data.PersistenceManager.read_states().birthdate
+        revive_body = self.__revive_body()
+        revive_mind = self.__revive_mind()
+        return creature.Creature(self.revive_name, self.revive_birthdate, revive_body, revive_mind)
 
 
 # тесты:
 if __name__ == '__main__':
-    """"""
+    st = StateCalculator(StatesManager)
+    print(st.revive_creature().name)
     # st = StatesManager('andrey', '','', '', '')
     # save = st.to_dict()
     # pm = PersistenceManager('')
