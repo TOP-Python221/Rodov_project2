@@ -51,20 +51,24 @@ class PersistenceManager:
             states.MindState(**data['mind_state'])
         )
 
+    # Затрудняюсь написать функцию
     @classmethod
     def write_states(cls, state, states_path: constants.pathlike = None):
+        pass
         # if not states_path:
         #     states_path = cls.default_states_path
-        with open(states_path, 'w+', encoding='utf-8') as filein:
-            state = states.StatesManager(constants.Kind.CAT.value, 'Boris', '19.02.2020', '', '')
-            data = jdump(filein)
+        # with open(states_path, 'w+', encoding='utf-8') as filein:
+        #     state = states.StatesManager(constants.Kind.CAT.value, 'Boris', '19.02.2020', '', '')
+        #     data = jdump(filein)
+
+
 
 
 
 # тесты
 if __name__ == '__main__':
     sm = PersistenceManager.read_states()
-    print(sm.mind_last.__dict__['health'])
+    print(sm.mind_last.__dict__)
     # print(sm.__dict__, end='\n\n')
     # print(sm.body_last.__dict__, end='\n\n')
     # print(sm.mind_last.__dict__, end='\n\n')

@@ -47,10 +47,8 @@ class Mind:
     patterns = {}
 
     def __init__(self,
-                 patterns: dict,
                  joy: int,
                  anger: int):
-        self.patterns = patterns
         self.joy = joy
         self.anger = anger
 
@@ -82,7 +80,9 @@ class Creature:
                  name: str,
                  birthdate: dt,
                  body_obj: Body,
-                 mind_obj: Mind):
+                 mind_obj: Mind,
+                 kind: constants.Kind = None):
+        self.kind = kind
         self.name = name
         self.__birthdate = birthdate
         self.body = body_obj
