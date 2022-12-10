@@ -129,6 +129,7 @@ class StateCalculator:
                        name: str,
                        birhdate: dt) -> creature.Creature:
         """Создаёт нового зверька"""
+        # УДАЛИТЬ: все эти атрибуты уже есть в self.last
         self.kind = kind
         self.name = name
         self.birhdate = birhdate
@@ -144,6 +145,7 @@ class StateCalculator:
 
     def __revive_body(self) -> creature.Body:
         """Вычисляет мгновенные значения параметров Body после загрузки данных из файлов состояний"""
+        # УДАЛИТЬ: и эти все параметры уже есть в self.last.body_last
         body_states = data.PersistenceManager.read_states()
         return creature.Body(body_states.mind_last.health,
                              body_states.mind_last.stamina,

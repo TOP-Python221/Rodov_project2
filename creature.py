@@ -90,6 +90,7 @@ class Creature:
         self.mind = mind_obj
 
     @property
+    # ИСПРАВИТЬ: нам здесь не нужен timedelta объект, верните сразу количество дней
     def age(self) -> td:
         return dt.now() - self.__birthdate
 
@@ -124,7 +125,7 @@ class CreatureActions(Creature):
     """Класс-контейнер для функций-активностей для зверька"""
     def __init__(self, name, birthdate,
                  body_obj, mind_obj,
-                 kind_actions = Dict[constants.Kind, 'Sequence[Callable]']):
+                 kind_actions: constants.KindActions):
         super().__init__(name, birthdate, body_obj, mind_obj)
         self.kind_actions = kind_actions
 

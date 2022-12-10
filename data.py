@@ -15,6 +15,7 @@ class PersistenceManager:
     default_parameters_path = constants.BASE_DIR / 'parameters.json'
     default_states_path = constants.BASE_DIR / 'states.json'
 
+    # КОММЕНТАРИЙ: вот это уже похоже на неплохую реализацию, молодец
     @classmethod
     def read_parameters(cls, kind: constants.Kind, parameters_path: constants.pathlike = None) -> states.KindParameters:
 
@@ -26,7 +27,9 @@ class PersistenceManager:
 
         return states.KindParameters(data[kind]['title'],
                                      data[kind]['maturation'],
+                                     # УДАЛИТЬ: яйцо мы договорились совсем убрать
                                      False,
+                                     # ИСПРАВИТЬ: надо либо здесь либо в конструкторе KindParameters преобразовать следующие словари в экземпляры Ranges
                                      data[kind]['ranges']['cub'],
                                      data[kind]['ranges']['young'],
                                      data[kind]['ranges']['adult'],
