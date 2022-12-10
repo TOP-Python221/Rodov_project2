@@ -1,6 +1,5 @@
 # импорт из стандартной библиотеки
 from __future__ import annotations
-import datetime
 from datetime import datetime as dt
 from dataclasses import dataclass
 import json
@@ -53,7 +52,7 @@ class BodyState:
                  hunger: int,
                  thirst: int,
                  intestine: int):
-        # self.timestamp = datetime.datetime.timestamp()
+        self.timestamp = timestamp
         self.health = health
         self.stamina = stamina
         self.hunger = hunger
@@ -61,14 +60,13 @@ class BodyState:
         self.intestine = intestine
 
     def to_dict(self) -> dict:
-        # Записывает физичкские зверька атрибуты в словарь
-        body_dictionary = {'timestamp': self.timestamp,
-                      'health': self.health,
-                      'stamina': self.stamina,
-                      'hunger': self.hunger,
-                      'thirst': self.thirst,
-                      'intestine': self.intestine}
-        return body_dictionary
+        # Записывает физические зверька атрибуты в словарь
+        return {'timestamp': self.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+                'health': self.health,
+                'stamina': self.stamina,
+                'hunger': self.hunger,
+                'thirst': self.thirst,
+                'intestine': self.intestine}
 
 
 class MindState:
@@ -80,19 +78,18 @@ class MindState:
                  anxiety: float):
         self.anxiety = anxiety
         self.activity = activity
-        # self.timestamp = datetime.datetime.timestamp()
+        self.timestamp = timestamp
         self.joy = joy
         self.anger = anger
         # self.pattern = pattern
 
     def to_dict(self):
         # Записывает моральные/ментальные зверька атрибуты в словарь
-        mind_dictionary = {'timestamp': self.timestamp,
-                      'joy': self.joy,
-                      'activity': self.activity,
-                      'anger': self.anger,
-                      'anxiety': self.anxiety}
-        return mind_dictionary
+        return {'timestamp': self.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+                'joy': self.joy,
+                'activity': self.activity,
+                'anger': self.anger,
+                'anxiety': self.anxiety}
 
 
 class StatesManager:
@@ -101,8 +98,8 @@ class StatesManager:
                  kind: constants.Kind,
                  name: str,
                  birthdate: dt,
-                 mind_last: MindState,
-                 body_last: BodyState):
+                 body_last: BodyState,
+                 mind_last: MindState):
         self.kind = kind
         self.name = name
         self.birthdate = birthdate
@@ -110,22 +107,24 @@ class StatesManager:
         self.mind_last = mind_last
 
     def to_dict(self) -> dict:
-        dictionary = {'kind': self.kind,
-                      'name': self.name,
-                      'birthdate': self.birthdate,
-                      'body_last': self.body_last,
-                      'mind_last': self.mind_last}
-        return dictionary
+        return {'kind': self.kind,
+                'name': self.name,
+                'birthdate': self.birthdate,
+                'body_last': self.body_last.to_dict(),
+                'mind_last': self.mind_last.to_dict()}
 
 
-import data # Избавляет от 'circular import'
+# УДАЛИТЬ: не так надо от закольцованного импорта избавляться, а разумным распределением кода по модулям
+# Избавляет от 'circular import'
+import data
+
 class StateCalculator:
-    """Расчитывает состояние зверька"""
+    """Рассчитывает состояние зверька"""
     def __init__(self, last: 'StatesManager'):
         self.last = last
 
     # ========== Отложил реализацию ==========
-    def creat_new_creature(self,
+    def create_new_creature(self,
                        kind: constants.Kind,
                        name: str,
                        birhdate: dt) -> creature.Creature:
@@ -133,15 +132,14 @@ class StateCalculator:
         self.kind = kind
         self.name = name
         self.birhdate = birhdate
-        self.body = creature.Body(rr(1, 6),rr(-1, 4), rr(-3, 5), rr(-3, 5)) # Так как питомец новый - интереса ради
-        # рандом распределит параметры для зверька
+        # Так как питомец новый - интереса ради рандом распределит параметры для зверька
+        self.body = creature.Body(rr(1, 6),rr(-1, 4), rr(-3, 5), rr(-3, 5))
         self.mind = creature.Mind(rr(-4, 4), rr(-3, 4))
         self.kind = input('Введите один из доступных видов питомцев(cat - кот, dog - собака, '
                           'fox - лиса, fox - лиса, bear - медведь, snake - змея, lizard - ящерица) >>> ').lower()
         self.name = input('Введите имя питомца >>> ').lower()
         self.birhdate = input('Дата рождения Вашего питомца(Г.М.Д) >>> ')
-        # new_creat = data.PersistenceManager.write_states() Где-то здесь должны быть занесены данные в json-файл о
-        # зверьке
+        # new_creat = data.PersistenceManager.write_states() Где-то здесь должны быть занесены данные в json-файл о зверьке
         return creature.Creature(self.name, self.birhdate, self.body, self.mind, self.kind)
 
     def __revive_body(self) -> creature.Body:
@@ -162,6 +160,7 @@ class StateCalculator:
 
     def revive_creature(self) -> creature.Creature:
         """Считывает последние состояния Mind, Body зверька и возвращает новые значения"""
+        # УДАЛИТЬ: наш экземпляр уже должен содержать все необходимые параметры зверька, мы ведь этот экземпляр StatesManager создали с помощью метода PersistenceManager.read_states(), прочитав и загрузив все необходимые данные — у вас проблема не с импортами, а с последовательностью действий
         self.revive_name = data.PersistenceManager.read_states().name
         self.revive_birthdate = data.PersistenceManager.read_states().birthdate
         revive_body = self.__revive_body()

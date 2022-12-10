@@ -1,5 +1,4 @@
 # импорт из стандартной библиотеки
-import datetime
 from datetime import datetime as dt, timedelta as td
 from typing import Dict
 from time import perf_counter as pc
@@ -26,16 +25,18 @@ class Body:
     # Пока не знаю как реализовать этот метод. :`(
     def tick_changes(self) -> dict:
         """Вычисляет и возвращает словарь с изменениями параметров питомца, которые должны быть применены по прошествии очередного субъективного часа."""
+        # УДАЛИТЬ: чего здесь точно не должно быть, так это чтения из файла — мы читаем из файла один раз в экземпляр StatesManager, затем с его помощью создаём экземпляры Body, Mind и Creature
         health = getattr(data.PersistenceManager.read_states().mind_last, 'health')
         stamina = getattr(data.PersistenceManager.read_states().mind_last, 'stamina')
         hunger = getattr(data.PersistenceManager.read_states().mind_last, 'hunger')
         thirst = getattr(data.PersistenceManager.read_states().mind_last, 'thirst')
-        delta = datetime.datetime.today()
+        delta = dt.today()
         # Условно говоря, по прошествию 15 минут...
-        delta = delta+datetime.timedelta(minutes=15)
-        #... происходят следующие изменения
+        delta = delta+td(minutes=15)
+        # КОММЕНТАРИЙ: только вот нам в этом словаре как раз сами изменения и нужны, а для этого надо сравнить текущее мгновенное значение каждого атрибута с соответствующим диапазоном в соответствующем возрасте — а диапазоны у нас где? правильно, в Creature. значит, что нужно с этим методом сделать? правильно, перенести в Creature, изменив модель
+        # ... происходят следующие изменения
         return {'health': health - 1,
-                'stamina': stamina -1,
+                'stamina': stamina - 1,
                 'hunger': hunger + 3,
                 'thirst': thirst + 4}
 
@@ -62,10 +63,10 @@ class Mind:
         activity = getattr(data.PersistenceManager.read_states().body_last, 'activity')
         anger = getattr(data.PersistenceManager.read_states().body_last, 'anger')
         anxiety = getattr(data.PersistenceManager.read_states().body_last, 'anxiety')
-        delta = datetime.datetime.today()
+        delta = dt.today()
         # Условно говоря, по прошествию 15 минут...
-        delta = delta+datetime.timedelta(minutes=15)
-        #... происходят следующие изменения
+        delta = delta + td(minutes=15)
+        # ... происходят следующие изменения
         return {'joy': joy - 3,
                 'activity': activity - 1,
                 'anger': anger + 2,
@@ -136,6 +137,7 @@ class CreatureActions(Creature):
     def be_a_naughty_cat(self) -> str:
         return "Ваша кошка сдирает диван >:X"
 
+
 if __name__ == '__main__':
-    md = Mind('','','')
+    md = Mind('', '', '')
     print(md.tick_changes())
