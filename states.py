@@ -23,6 +23,7 @@ class KindParameters:
             self.hunger = hunger
             self.thirst = thirst
 
+    # СДЕЛАТЬ: изучите конструктор KindParameters в референсе и все вопросы по нему пишите в комментариях здесь
     def __init__(self,
                  title: str,
                  maturity: tuple,

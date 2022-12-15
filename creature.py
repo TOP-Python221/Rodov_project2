@@ -22,6 +22,7 @@ class Body:
         self.hunger = hunger
         self.thirst = thirst
 
+    # КОММЕНТАРИЙ: как раз потому что нет ясного представления "кто мы, и куда мы идём" — а за это представление отвечает модель =Ъ
     # Пока не знаю как реализовать этот метод. :`(
     def tick_changes(self) -> dict:
         """Вычисляет и возвращает словарь с изменениями параметров питомца, которые должны быть применены по прошествии очередного субъективного часа."""
@@ -63,6 +64,7 @@ class Mind:
         activity = getattr(data.PersistenceManager.read_states().body_last, 'activity')
         anger = getattr(data.PersistenceManager.read_states().body_last, 'anger')
         anxiety = getattr(data.PersistenceManager.read_states().body_last, 'anxiety')
+        # УДАЛИТЬ: вычисления времени должны происходить не в сущности питомца, а в той(-ех) сущности(-ях), которая(-ые) управляет(-ют) питомцем
         delta = dt.today()
         # Условно говоря, по прошествию 15 минут...
         delta = delta + td(minutes=15)
@@ -104,6 +106,8 @@ class Creature:
                 new_value = getattr(self.body, attr) + delta
                 setattr(self.body, attr, new_value)
 
+    # КОММЕНТАРИЙ: можно, кстати, добавить отдельную ветку классов видов пищи, которые по-разному влияют на разных существ...)) так или иначе, какие-то виды пищи всё равно нужны, иначе как тогда понимать, какие значения должны передаваться в этот метод
+
     def feed(self, food_amount: int) -> None:
         self.body.hunger -= food_amount
         self.mind.anger -= food_amount
@@ -114,6 +118,7 @@ class Creature:
         self.mind.anger -= enjoy_amount
 
     def talk(self, conver_amount) -> None:
+        # КОММЕНТАРИЙ: я бы ещё сказал, что разговор уменьшает тревожность — впрочем, это зависит от вида питомца, от его возраста — вполне вероятно я бы сказал, что такие значения необходимо учитывать в параметрической модели (и, соответственно, в KindParameters) — но можно обойтись и константами
         self.mind.anger -= conver_amount
         self.mind.joy += conver_amount
 
