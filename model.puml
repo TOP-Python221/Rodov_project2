@@ -40,7 +40,7 @@ class Creature {
     ..properties..
     +age
     __
-    +apply_tick_changes()
+    -tick_changes() -> dict
     +feed()
     +play()
     +talk()
@@ -69,7 +69,7 @@ class StatesCalculator {
     -revive_body() -> Body
     -revive_mind() -> Mind
     +revive_creature() -> Creature
-    {method}<i>?? новорождённое существо ??</i>
+    +create_new_creature() -> Creature
 }
 StatesCalculator::last o-- StatesManager
 StatesCalculator --> Creature
