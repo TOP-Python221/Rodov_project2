@@ -13,35 +13,53 @@ import constants
 class KindParameters:
     """Композиция. Описывает диапазоны состояний."""
     class Ranges:
-        def __init__(self,
-                     health: 'ParamRanges',
-                     stamina: 'ParamRanges',
-                     hunger: 'ParamRanges',
-                     thirst: 'ParamRanges'):
-            self.health = health
-            self.stamina = stamina
-            self.hunger = hunger
-            self.thirst = thirst
+        def __init__(self, health_ranges, stamina_ranges,
+                     hunger_ranges, thirst_ranges, intestine_ranges,
+                     activity, anxiety, anger_coeff, joy_coeff):
+            self.health = health_ranges
+            self.stamina = stamina_ranges
+            self.hunger = hunger_ranges
+            self.thirst = thirst_ranges
+            self.intestine = intestine_ranges
+            self.joy = (0, 100)
+            self.joy_coeff = joy_coeff
+            self.activity= activity
+            self.anger = (0, 100)
+            self.anger_coeff = anger_coeff
+            self.anxiety= anxiety
+
+            def __iter__(self):
+                return iter(self.__dict__.items())
 
     # СДЕЛАТЬ: изучите конструктор KindParameters в референсе и все вопросы по нему пишите в комментариях здесь
+
+    # Вопросов не то, что бы не было, но... Меня пугает тот объём кода, что я вижу в нашем референсе: посидеть,
+    # разобраться проблем бы не было, будь у меня на этой неделе столь же свободного времени, как на прошлой.
+    # Признаться честно, думал чууууть-чуть полегче будет. Хотя и, опять же, посидеть - подумать, чай,
+    # легче код будет восприниматься. Ладно, вопрос таков: за что начинать браться то? :) Работать с puml моделью.
+    # Так у меня ж в голову то при работе с ней толком ничего не лезет. Думаю, глобально, как Вы,
+    # ничего менять не буду. Да, не столь лаконично и изящно всё будет выглядеть, но и тырить Ваши строчки кода тоже
+    # нет желания. Хоть я и местами это сделал, но, всё же, хочется своими ручками всё сделать. Хотя бы бОльшую часть :)
+
     def __init__(self,
                  title: str,
                  maturity: tuple,
-                 egg: Ranges,
                  cub: Ranges,
                  yong: Ranges,
                  adult: Ranges,
                  elder: Ranges):
         self.title = title
         self.maturity = maturity
-        self.egg = egg
         self.cub = cub
         self.yong = yong
         self.adult = adult
         self.elder = elder
 
-    def age_ranges(self) -> Ranges:
-        pass
+    def age_ranges(self, days: int) -> Ranges:
+        """"""
+        for age, attr in zip(self.maturity, list(constants.Matureness)):
+            if days in age:
+                return getattr(self, attr)
 
 
 class BodyState:
@@ -82,7 +100,6 @@ class MindState:
         self.timestamp = timestamp
         self.joy = joy
         self.anger = anger
-        # self.pattern = pattern
 
     def to_dict(self):
         # Записывает моральные/ментальные зверька атрибуты в словарь
@@ -121,19 +138,11 @@ import data
 
 class StateCalculator:
     """Рассчитывает состояние зверька"""
-    def __init__(self, last: 'StatesManager'):
-        self.last = last
+    def __init__(self):
+        self.last = data.PersistenceManager.read_states('states.json')
 
-    # ========== Отложил реализацию ==========
-    def create_new_creature(self,
-                       kind: constants.Kind,
-                       name: str,
-                       birhdate: dt) -> creature.Creature:
+    def create_new_creature(self) -> creature.Creature:
         """Создаёт нового зверька"""
-        # УДАЛИТЬ: все эти атрибуты уже есть в self.last
-        self.kind = kind
-        self.name = name
-        self.birhdate = birhdate
         # Так как питомец новый - интереса ради рандом распределит параметры для зверька
         self.body = creature.Body(rr(1, 6),rr(-1, 4), rr(-3, 5), rr(-3, 5))
         self.mind = creature.Mind(rr(-4, 4), rr(-3, 4))
@@ -142,41 +151,34 @@ class StateCalculator:
         self.name = input('Введите имя питомца >>> ').lower()
         self.birhdate = input('Дата рождения Вашего питомца(Г.М.Д) >>> ')
         # new_creat = data.PersistenceManager.write_states() Где-то здесь должны быть занесены данные в json-файл о зверьке
-        return creature.Creature(self.name, self.birhdate, self.body, self.mind, self.kind)
+        return creature.Creature(self.last.name, self.last.birthdate,
+                                 self.last.body_last, self.last.mind_last,
+                                 self.last.kind)
 
     def __revive_body(self) -> creature.Body:
         """Вычисляет мгновенные значения параметров Body после загрузки данных из файлов состояний"""
-        # УДАЛИТЬ: и эти все параметры уже есть в self.last.body_last
-        body_states = data.PersistenceManager.read_states()
-        return creature.Body(body_states.mind_last.health,
-                             body_states.mind_last.stamina,
-                             body_states.mind_last.hunger,
-                             body_states.mind_last.thirst)
+        return creature.Body(self.last.body_last.health,
+                             self.last.body_last.stamina,
+                             self.last.body_last.hunger,
+                             self.last.body_last.thirst)
 
     def __revive_mind(self) -> creature.Mind:
         """Вычисляет мгновенные значения параметров Mind после загрузки данных из файлов состояний"""
-        mind_states = data.PersistenceManager.read_states()
-        return creature.Mind(mind_states.body_last.anxiety,
-                             mind_states.body_last.joy,
-                             mind_states.body_last.anger,
-                             )
+        return creature.Mind(self.last.mind_last.anxiety,
+                             self.last.mind_last.joy,
+                             self.last.mind_last.anger)
 
     def revive_creature(self) -> creature.Creature:
         """Считывает последние состояния Mind, Body зверька и возвращает новые значения"""
-        # УДАЛИТЬ: наш экземпляр уже должен содержать все необходимые параметры зверька, мы ведь этот экземпляр StatesManager создали с помощью метода PersistenceManager.read_states(), прочитав и загрузив все необходимые данные — у вас проблема не с импортами, а с последовательностью действий
-        self.revive_name = data.PersistenceManager.read_states().name
-        self.revive_birthdate = data.PersistenceManager.read_states().birthdate
-        revive_body = self.__revive_body()
-        revive_mind = self.__revive_mind()
-        return creature.Creature(self.revive_name, self.revive_birthdate, revive_body, revive_mind)
+        return creature.Creature(self.last.name,
+                                 self.last.birthdate,
+                                 self.last.body_last,
+                                 self.last.mind_last,
+                                 self.last.kind)
 
 
 # тесты:
 if __name__ == '__main__':
-    st = StateCalculator(StatesManager)
-    print(st.revive_creature().name)
-    # st = StatesManager('andrey', '','', '', '')
-    # save = st.to_dict()
-    # pm = PersistenceManager('')
-    # # pm.write_file(saves, 'property_saves.json')
-    # print(pm.read_file('property_saves.json'))
+    sc = StateCalculator()
+    print(sc.revive_creature())
+
