@@ -1,9 +1,9 @@
 # импорт из стандартной библиотеки
 from json import load as jload, dump as jdump
 from datetime import datetime as dt
+from fractions import Fraction as frac
 
 # импорт дополнительных модулей
-import creature
 import states
 import constants
 
@@ -15,25 +15,36 @@ class PersistenceManager:
     default_parameters_path = constants.BASE_DIR / 'parameters.json'
     default_states_path = constants.BASE_DIR / 'states.json'
 
-    # КОММЕНТАРИЙ: вот это уже похоже на неплохую реализацию, молодец
     @classmethod
     def read_parameters(cls, kind: constants.Kind, parameters_path: constants.pathlike = None) -> states.KindParameters:
-
-        """Загружает из JSON файла параметры вида в экземпляр KindParameters и возвращает его."""
+        """"""
         if not parameters_path:
             parameters_path = cls.default_parameters_path
-        with open(parameters_path, encoding='utf-8') as filein:
-            data = jload(filein)
 
-        return states.KindParameters(data[kind]['title'],
-                                     data[kind]['maturation'],
-                                     # УДАЛИТЬ: яйцо мы договорились совсем убрать
-                                     False,
-                                     # ИСПРАВИТЬ: надо либо здесь либо в конструкторе KindParameters преобразовать следующие словари в экземпляры Ranges
-                                     data[kind]['ranges']['cub'],
-                                     data[kind]['ranges']['young'],
-                                     data[kind]['ranges']['adult'],
-                                     data[kind]['ranges']['cub'])
+        with open(parameters_path, encoding='utf-8') as filein:
+            data = jload(filein)[kind.value]
+
+        for matureness, attrs in data['ranges'].items():
+            for param, infls in attrs.items():
+                if not infls:
+                    continue
+                if isinstance(infls, str):
+                    if match := constants.separated_floats_pattern.fullmatch(infls):
+                        data['ranges'][matureness][param] = tuple(
+                            float(n)
+                            for n in infls.split(match.group('sep'))
+                        )
+                    else:
+                        data['ranges'][matureness][param] = float(infls)
+                elif isinstance(infls, dict):
+                    for range, values in infls.copy().items():
+                        key = tuple(int(n) for n in range.split(','))
+                        val = {
+                            k: float(frac(v))
+                            for k, v in values.items()
+                        }
+                        data['ranges'][matureness][param][key] = val
+                        del data['ranges'][matureness][param][range]
 
     @classmethod
     def read_states(cls, states_path: constants.pathlike = None) -> states.StatesManager:
@@ -54,24 +65,18 @@ class PersistenceManager:
             states.MindState(**data['mind_state'])
         )
 
-    # Затрудняюсь написать функцию
     @classmethod
-    def write_states(cls, state, states_path: constants.pathlike = None):
-        pass
-        # if not states_path:
-        #     states_path = cls.default_states_path
-        # with open(states_path, 'w+', encoding='utf-8') as filein:
-        #     state = states.StatesManager(constants.Kind.CAT.value, 'Boris', '19.02.2020', '', '')
-        #     data = jdump(filein)
-
-
-
+    def write_states(cls, data: dict, states_path: constants.pathlike = None):
+        if not states_path:
+            states_path = cls.default_states_path
+        with open(states_path, 'w', encoding='utf-8') as open_file:
+            jdump(data, open_file)
 
 
 # тесты
 if __name__ == '__main__':
-    sm = PersistenceManager.read_states()
-    print(sm.mind_last.__dict__)
+    d = PersistenceManager.read_states()
+    print(d.mind_last.joy)
     # print(sm.__dict__, end='\n\n')
     # print(sm.body_last.__dict__, end='\n\n')
     # print(sm.mind_last.__dict__, end='\n\n')
