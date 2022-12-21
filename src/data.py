@@ -12,6 +12,7 @@ class PersistenceManager:
     """
     Предоставляет пути по умолчанию и методы для работы с файлами данных.
     """
+    # ИСПРАВИТЬ: эти пути должны быть переписаны с учётом новой структуры каталогов — в референсе я прописал в эти атрибуты пути до файлов данных, предназначенных для production (отдельный подкаталог в data)
     default_parameters_path = constants.BASE_DIR / 'parameters.json'
     default_states_path = constants.BASE_DIR / 'states.json'
 
