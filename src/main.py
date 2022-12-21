@@ -1,6 +1,5 @@
-import data
 import creature
-import states
+from src import data, states
 from schedule import every
 from threading import Event
 

@@ -1,11 +1,8 @@
 # импорт из стандартной библиотеки
 from datetime import datetime as dt, timedelta as td
-from typing import Dict
-from time import perf_counter as pc
 
 # импорт дополнительных модулей
 import constants
-import data
 
 
 class Body:
@@ -26,20 +23,7 @@ class Body:
     # Пока не знаю как реализовать этот метод. :`(
     def tick_changes(self) -> dict:
         """Вычисляет и возвращает словарь с изменениями параметров питомца, которые должны быть применены по прошествии очередного субъективного часа."""
-        # УДАЛИТЬ: чего здесь точно не должно быть, так это чтения из файла — мы читаем из файла один раз в экземпляр StatesManager, затем с его помощью создаём экземпляры Body, Mind и Creature
-        health = getattr(data.PersistenceManager.read_states().mind_last, 'health')
-        stamina = getattr(data.PersistenceManager.read_states().mind_last, 'stamina')
-        hunger = getattr(data.PersistenceManager.read_states().mind_last, 'hunger')
-        thirst = getattr(data.PersistenceManager.read_states().mind_last, 'thirst')
-        delta = dt.today()
-        # Условно говоря, по прошествию 15 минут...
-        delta = delta+td(minutes=15)
-        # КОММЕНТАРИЙ: только вот нам в этом словаре как раз сами изменения и нужны, а для этого надо сравнить текущее мгновенное значение каждого атрибута с соответствующим диапазоном в соответствующем возрасте — а диапазоны у нас где? правильно, в Creature. значит, что нужно с этим методом сделать? правильно, перенести в Creature, изменив модель
-        # ... происходят следующие изменения
-        return {'health': health - 1,
-                'stamina': stamina - 1,
-                'hunger': hunger + 3,
-                'thirst': thirst + 4}
+
 
 
 class Mind:
@@ -60,19 +44,7 @@ class Mind:
 
     def tick_changes(self) -> dict:
         """Вычисляет и возвращает словарь с изменениями параметров питомца, которые должны быть применены по прошествии очередного субъективного часа."""
-        joy = getattr(data.PersistenceManager.read_states().body_last, 'joy')
-        activity = getattr(data.PersistenceManager.read_states().body_last, 'activity')
-        anger = getattr(data.PersistenceManager.read_states().body_last, 'anger')
-        anxiety = getattr(data.PersistenceManager.read_states().body_last, 'anxiety')
-        # УДАЛИТЬ: вычисления времени должны происходить не в сущности питомца, а в той(-ех) сущности(-ях), которая(-ые) управляет(-ют) питомцем
-        delta = dt.today()
-        # Условно говоря, по прошествию 15 минут...
-        delta = delta + td(minutes=15)
-        # ... происходят следующие изменения
-        return {'joy': joy - 3,
-                'activity': activity - 1,
-                'anger': anger + 2,
-                'anxiety': anxiety + 4}
+
 
 
 class Creature:
@@ -92,19 +64,12 @@ class Creature:
         self.mind = mind_obj
 
     @property
-    # ИСПРАВИТЬ: нам здесь не нужен timedelta объект, верните сразу количество дней
     def age(self) -> td:
-        return dt.now() - self.__birthdate
+        return (dt.now() - self.__birthdate).days
 
-    def apply_changes(self) -> None:
-        """Принимает значения атрибутов от функции tick_changes"""
-        for state in (self.mind, self.body):
-            for attr, delta in state.tick_changes().items():
-                new_value = getattr(self.mind, attr) + delta
-                setattr(self.mind, attr, new_value)
-            for attr, delta in state.tick_changes().items():
-                new_value = getattr(self.body, attr) + delta
-                setattr(self.body, attr, new_value)
+    def tick_changes(self) -> dict:
+        """Вычисляет и возвращает словарь с изменениями параметров питомца, которые должны быть применены по прошествии очередного субъективного часа."""
+
 
     # КОММЕНТАРИЙ: можно, кстати, добавить отдельную ветку классов видов пищи, которые по-разному влияют на разных существ...)) так или иначе, какие-то виды пищи всё равно нужны, иначе как тогда понимать, какие значения должны передаваться в этот метод
 
@@ -124,6 +89,9 @@ class Creature:
 
     def clean(self, clean_amount) -> None:
         self.mind.anger -= clean_amount
+
+    def action(self):
+        pass
 
 
 class CreatureActions(Creature):
@@ -145,5 +113,7 @@ class CreatureActions(Creature):
 
 
 if __name__ == '__main__':
-    md = Mind('', '', '')
-    print(md.tick_changes())
+    cr = Creature('', '', '', '')
+    print(cr.age)
+    print(cr.__dict__['_Creature__birthdate'])
+    print(type(dt.now().day))

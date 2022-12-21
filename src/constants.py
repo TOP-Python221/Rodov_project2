@@ -25,6 +25,7 @@ class Matureness(str, Enum):
 
 
 BASE_DIR = Path(path[0])
+DATA_DIR = BASE_DIR / 'data'
 
 
 # переменные типов для аннотации
@@ -35,3 +36,6 @@ KindActions = Dict[Kind, 'Sequence[Callable]']
 separated_floats_pattern = reg_pattern_compile(
     r'^((?P<float>\d+\.\d+)(?P<sep>[,; ])?){2,}$'
 )
+
+ACTIVE_STATE_KEYS = {'timestamp', 'health', 'stamina', 'hunger', 'thirst', 'intestine', 'joy', 'activity', 'anger', 'anxiety'}
+

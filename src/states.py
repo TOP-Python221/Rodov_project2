@@ -1,8 +1,6 @@
 # импорт из стандартной библиотеки
 from __future__ import annotations
 from datetime import datetime as dt
-from dataclasses import dataclass
-import json
 from random import randrange as rr
 
 # импорт дополнительных модулей
@@ -135,7 +133,6 @@ class StatesManager:
 # УДАЛИТЬ: не так надо от закольцованного импорта избавляться, а разумным распределением кода по модулям
 # Избавляет от 'circular import'
 import data
-
 class StateCalculator:
     """Рассчитывает состояние зверька"""
     def __init__(self):
@@ -144,7 +141,7 @@ class StateCalculator:
     def create_new_creature(self) -> creature.Creature:
         """Создаёт нового зверька"""
         # Так как питомец новый - интереса ради рандом распределит параметры для зверька
-        self.body = creature.Body(rr(1, 6),rr(-1, 4), rr(-3, 5), rr(-3, 5))
+        self.body = creature.Body(rr(1, 6), rr(-1, 4), rr(-3, 5), rr(-3, 5))
         self.mind = creature.Mind(rr(-4, 4), rr(-3, 4))
         self.kind = input('Введите один из доступных видов питомцев(cat - кот, dog - собака, '
                           'fox - лиса, fox - лиса, bear - медведь, snake - змея, lizard - ящерица) >>> ').lower()

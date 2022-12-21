@@ -4,7 +4,7 @@ from datetime import datetime as dt
 from fractions import Fraction as frac
 
 # импорт дополнительных модулей
-import states
+from src import states
 import constants
 
 
@@ -75,8 +75,10 @@ class PersistenceManager:
 
 # тесты
 if __name__ == '__main__':
-    d = PersistenceManager.read_states()
-    print(d.mind_last.joy)
+    d = PersistenceManager()
+    print(d.default_states_path)
+    # d = PersistenceManager.read_states()
+    # print(d.mind_last.joy)
     # print(sm.__dict__, end='\n\n')
     # print(sm.body_last.__dict__, end='\n\n')
     # print(sm.mind_last.__dict__, end='\n\n')

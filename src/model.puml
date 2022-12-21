@@ -82,7 +82,6 @@ class Body {
     +hunger: int
     +thirst: int
     +intestine: int
-    +tick_changes(\n\tparameters: dict\n\t\t\t) -> dict
 }
 Body --o Creature::body
 
@@ -96,7 +95,6 @@ class Mind {
     ..properties..
     +pattern
     __
-    +tick_changes(\n\tparameters: dict\n\t\t\t) -> dict
 }
 Mind --o Creature::mind
 
