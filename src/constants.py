@@ -1,9 +1,9 @@
 # импорт из стандартной библиотеки
 from enum import Enum
 from pathlib import Path
+from re import compile as reg_pattern_compile
 from sys import path
 from typing import Union, Tuple, Dict
-from re import compile as reg_pattern_compile
 
 
 class Kind(Enum):

@@ -1,7 +1,11 @@
-import creature
-from src import data, states
+# импорт из стандартной библиотеки
 from schedule import every
 from threading import Event
+
+# импорт дополнительных модулей текущего пакета
+from . import creature
+from . import data
+from . import states
 
 
 class Controller:

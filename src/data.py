@@ -3,9 +3,9 @@ from json import load as jload, dump as jdump
 from datetime import datetime as dt
 from fractions import Fraction as frac
 
-# импорт дополнительных модулей
-from src import states
-import constants
+# импорт дополнительных модулей текущего пакета
+from . import states
+from . import constants
 
 
 class PersistenceManager:

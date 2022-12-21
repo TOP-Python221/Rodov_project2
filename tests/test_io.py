@@ -1,7 +1,9 @@
+# импорт из стандартной библиотеки
 from pytest import mark, fixture
 
-from src.data import PersistenceManager as PM
+# импорт дополнительных модулей другого пакета
 from src.constants import DATA_DIR, ACTIVE_STATE_KEYS
+from src.data import PersistenceManager as PM
 
 
 class TestActiveWrite:

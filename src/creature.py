@@ -1,8 +1,8 @@
 # импорт из стандартной библиотеки
 from datetime import datetime as dt, timedelta as td
 
-# импорт дополнительных модулей
-import constants
+# импорт дополнительных модулей текущего пакета
+from . import constants
 
 
 class Body:

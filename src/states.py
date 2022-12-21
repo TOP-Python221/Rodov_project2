@@ -3,9 +3,9 @@ from __future__ import annotations
 from datetime import datetime as dt
 from random import randrange as rr
 
-# импорт дополнительных модулей
-import creature
-import constants
+# импорт дополнительных модулей текущего пакета
+from . import creature
+from . import constants
 
 
 class KindParameters:
