@@ -4,12 +4,17 @@ from pytest import mark, fixture
 # импорт дополнительных модулей другого пакета
 from src.constants import DATA_DIR, ACTIVE_STATE_KEYS
 from src.data import PersistenceManager as PM
+from src.for_tests import foo
+from src import constants
+
+# class TestActiveWrite:
+#     def test_wrond_value(self):
+#         eqs = PM.
 
 
-class TestActiveWrite:
-    read_data = PM.read_states()
-    print(read_data)
-
+# class TestAct:
+#     def test_act_foo(self):
+#         assert foo(10, 2) == 5
 
 # def active_empty_files():
 #     return (DATA_DIR / 'tests').rglob('active_empty*.json')
@@ -31,11 +36,25 @@ class TestActiveWrite:
 #     return ACTIVE_STATE_KEYS
 
 
+# def active_empty_files():
+#   return DATA_DIR / 'tests'
 
+# К сожалению, это пока что всё, что я смог из себя выдавить за один день :)
+# Так особо и не допёр, как сравнить экземпляры класса. Не мог на русском языке найти подробное описание работы
+# метода __eq__ и его параметров. Сейчас попробую этим заняться.
+# В общем, как Вы уже поняли, я пытался симулировать передачу лишнего параметра питомца (new_pet = [
+# 'some_unexpected_arg', 'title', 'maturity', ....)
+@mark.xfail
 class TestParametersRead:
-    pass
+  def test_unhappy_arg(self):
+    active_pet = PM()
+    saved_pet = active_pet.read_parameters(constants.Kind.CAT).__dir__()
+    new_pet = ['some_unexpected_arg', 'title', 'maturity', 'cub', 'young', 'adult', 'elder', '__module__', '__doc__',
+               'Ranges', '__init__', '__eq__', 'age_ranges', '__dict__', '__weakref__', '__hash__', '__new__', '__repr__', '__str__', '__getattribute__', '__setattr__', '__delattr__', '__lt__', '__le__', '__ne__', '__gt__', '__ge__', '__reduce_ex__', '__reduce__', '__subclasshook__', '__init_subclass__', '__format__', '__sizeof__', '__dir__', '__class__']
+    assert saved_pet == new_pet
 
-aw= TestActiveWrite()
+
+# aw= TestActiveWrite()
 # aw.read_data()
 # class TestActiveRead:
 #
