@@ -9,6 +9,7 @@ from src.model import states
 from src.utils import constants
 
 
+
 class PersistenceManager:
     """
     Предоставляет пути по умолчанию и методы для работы с файлами данных.
