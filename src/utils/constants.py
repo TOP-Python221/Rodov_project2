@@ -24,8 +24,9 @@ class Matureness(str, Enum):
     ELDER = 'elder'
 
 
-BASE_DIR = Path(path[0])
-DATA_DIR = BASE_DIR / 'data'
+BASE_DIR = Path(path[1])
+DATA_DIR = BASE_DIR / 'src/model/data'
+print(BASE_DIR)
 
 
 # переменные типов для аннотации
