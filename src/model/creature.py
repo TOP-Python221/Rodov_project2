@@ -2,7 +2,7 @@
 from datetime import datetime as dt, timedelta as td
 
 # импорт дополнительных модулей текущего пакета
-from . import constants
+from src.utils import constants
 
 
 class Body:
@@ -33,9 +33,11 @@ class Mind:
     patterns = {}
 
     def __init__(self,
+                 anxiety: int,
                  joy: int,
                  anger: int):
         self.joy = joy
+        self.anxiety = anxiety
         self.anger = anger
 
     @property
@@ -63,6 +65,16 @@ class Creature:
         self.body = body_obj
         self.mind = mind_obj
 
+    def __eq__(self, other):
+        if not isinstance(other, Creature):
+            raise TypeError('TypeError')
+
+        return self.kind == other.kind and self.name == other.name and self.__birthdate == other.__birthdate and \
+               self.body == other.body and \
+               self.mind == other.mind
+
+
+
     @property
     def age(self) -> td:
         return (dt.now() - self.__birthdate).days
@@ -86,6 +98,7 @@ class Creature:
         # КОММЕНТАРИЙ: я бы ещё сказал, что разговор уменьшает тревожность — впрочем, это зависит от вида питомца, от его возраста — вполне вероятно я бы сказал, что такие значения необходимо учитывать в параметрической модели (и, соответственно, в KindParameters) — но можно обойтись и константами
         self.mind.anger -= conver_amount
         self.mind.joy += conver_amount
+        self.mind.anxiety -= conver_amount
 
     def clean(self, clean_amount) -> None:
         self.mind.anger -= clean_amount
@@ -114,6 +127,8 @@ class CreatureActions(Creature):
 
 if __name__ == '__main__':
     cr = Creature('', '', '', '')
-    print(cr.age)
-    print(cr.__dict__['_Creature__birthdate'])
-    print(type(dt.now().day))
+    cr2 = Creature('', '', '', '')
+    print(cr == cr2)
+    # print(cr.age)
+    # print(cr.__dict__['_Creature__birthdate'])
+    # print(type(dt.now().day))
