@@ -4,8 +4,9 @@ from datetime import datetime as dt
 from random import randrange as rr
 
 # импорт дополнительных модулей текущего пакета
-from . import creature
-from . import constants
+from src.model import creature
+from src.utils import constants
+from src.model import data
 
 
 class KindParameters:
@@ -43,15 +44,30 @@ class KindParameters:
                  title: str,
                  maturity: tuple,
                  cub: Ranges,
-                 yong: Ranges,
+                 young: Ranges,
                  adult: Ranges,
                  elder: Ranges):
         self.title = title
         self.maturity = maturity
         self.cub = cub
-        self.yong = yong
+        self.young = young
         self.adult = adult
         self.elder = elder
+
+    def __eq__(self, other):
+        if not isinstance(other, KindParameters):
+            raise TypeError('Операнд справа должен иметь тип KindParameters')
+
+        elder = other if isinstance(other, tuple) else other.elder
+        young = other if isinstance(other, tuple) else other.young
+        adult = other if isinstance(other, tuple) else other.adult
+        title = other if isinstance(other, str) else other.title
+        maturity = other if isinstance(other, tuple) else other.maturity
+        cub = other if isinstance(other, tuple) else other.cub
+
+        return self.elder == elder, self.young == young, self.adult == adult, self.title == title, self.maturity == \
+               maturity, self.cub == cub
+
 
     def age_ranges(self, days: int) -> Ranges:
         """"""
@@ -136,21 +152,22 @@ import data
 class StateCalculator:
     """Рассчитывает состояние зверька"""
     def __init__(self):
-        self.last = data.PersistenceManager.read_states('states.json')
+        self.last = data.PersistenceManager.read_states()
+
 
     def create_new_creature(self) -> creature.Creature:
         """Создаёт нового зверька"""
         # Так как питомец новый - интереса ради рандом распределит параметры для зверька
         self.body = creature.Body(rr(1, 6), rr(-1, 4), rr(-3, 5), rr(-3, 5))
-        self.mind = creature.Mind(rr(-4, 4), rr(-3, 4))
+        self.mind = creature.Mind(rr(-4, 4), rr(-3, 4), rr(0, 5))
         self.kind = input('Введите один из доступных видов питомцев(cat - кот, dog - собака, '
                           'fox - лиса, fox - лиса, bear - медведь, snake - змея, lizard - ящерица) >>> ').lower()
         self.name = input('Введите имя питомца >>> ').lower()
         self.birhdate = input('Дата рождения Вашего питомца(Г.М.Д) >>> ')
         # new_creat = data.PersistenceManager.write_states() Где-то здесь должны быть занесены данные в json-файл о зверьке
-        return creature.Creature(self.last.name, self.last.birthdate,
-                                 self.last.body_last, self.last.mind_last,
-                                 self.last.kind)
+        return creature.Creature(self.body, self.mind,
+                                 self.kind, self.name,
+                                 self.birhdate)
 
     def __revive_body(self) -> creature.Body:
         """Вычисляет мгновенные значения параметров Body после загрузки данных из файлов состояний"""
@@ -176,6 +193,6 @@ class StateCalculator:
 
 # тесты:
 if __name__ == '__main__':
-    sc = StateCalculator()
-    print(sc.revive_creature())
+    pet = StateCalculator()
+    print(pet.revive_creature())
 
