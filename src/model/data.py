@@ -4,17 +4,18 @@ from datetime import datetime as dt
 from fractions import Fraction as frac
 
 # импорт дополнительных модулей текущего пакета
-from . import states
-from . import constants
+# Среда ругалась на импорт и я переписал '.' -> src :\
+from src.model import states
+from src.utils import constants
 
 
 class PersistenceManager:
     """
     Предоставляет пути по умолчанию и методы для работы с файлами данных.
     """
-    # ИСПРАВИТЬ: эти пути должны быть переписаны с учётом новой структуры каталогов — в референсе я прописал в эти атрибуты пути до файлов данных, предназначенных для production (отдельный подкаталог в data)
-    default_parameters_path = constants.BASE_DIR / 'parameters.json'
-    default_states_path = constants.BASE_DIR / 'states.json'
+    # Вроде, исправил :)
+    default_parameters_path = constants.BASE_DIR / 'data/tests/parameters.json'
+    default_states_path = constants.BASE_DIR / 'data/states.json'
 
     @classmethod
     def read_parameters(cls, kind: constants.Kind, parameters_path: constants.pathlike = None) -> states.KindParameters:
@@ -46,6 +47,12 @@ class PersistenceManager:
                         }
                         data['ranges'][matureness][param][key] = val
                         del data['ranges'][matureness][param][range]
+
+        return states.KindParameters(
+            data['title'],
+            data['maturation'],
+            **data['ranges']
+        )
 
     @classmethod
     def read_states(cls, states_path: constants.pathlike = None) -> states.StatesManager:
