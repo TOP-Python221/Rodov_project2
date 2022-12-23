@@ -2,10 +2,10 @@
 from pytest import mark, fixture
 
 # импорт дополнительных модулей другого пакета
-from src.constants import DATA_DIR, ACTIVE_STATE_KEYS
-from src.data import PersistenceManager as PM
+from src.model.data import PersistenceManager as PM
 from src.for_tests import foo
-from src import constants
+from src.utils import constants
+from src.model import states
 
 
 # К сожалению, это пока что всё, что я смог из себя выдавить за один день :)
@@ -35,20 +35,38 @@ def get_init_param() -> list:
 
 # Всё также на данный момент времени не разобрался с __eq__, поэтому тест, увы, такой. Как говорится: на безрыбье и
 # рак рыба
-class TestActiveParameters:
-  @staticmethod
-  @mark.xfail
-  @mark.parametrize('arg, exp_res', [({}, get_init_param()),
-                                     ([], get_init_param()),
-                                     ('', get_init_param()),
-                                     (1, get_init_param()),
-                                     (['unex_param','title', 'maturity', 'cub', 'young', 'adult', 'elder', 'Ranges',
-                                       'age_ranges'], get_init_param()),
-                                     (['maturity', 'cub', 'elder', 'Ranges',
-                                       'age_ranges'], get_init_param())])
-  def test_unhappy_keys(arg, exp_res):
-    assert arg == exp_res
+# class TestActiveParameters:
+#   @staticmethod
+#   @mark.xfail
+#   @mark.parametrize('arg, exp_res', [({}, get_init_param()),
+#                                      ([], get_init_param()),
+#                                      ('', get_init_param()),
+#                                      (1, get_init_param()),
+#                                      (['unex_param','title', 'maturity', 'cub', 'young', 'adult', 'elder', 'Ranges',
+#                                        'age_ranges'], get_init_param()),
+#                                      (['maturity', 'cub', 'elder', 'Ranges',
+#                                        'age_ranges'], get_init_param())])
+#   def test_unhappy_keys(arg, exp_res):
+#     assert arg == exp_res
+#
+#   @staticmethod
+#   def test_happy_keys():
+#     assert ['title', 'maturity', 'cub', 'young', 'adult', 'elder', 'Ranges', 'age_ranges'] == get_init_param()
 
-  @staticmethod
-  def test_happy_keys():
-    assert ['title', 'maturity', 'cub', 'young', 'adult', 'elder', 'Ranges', 'age_ranges'] == get_init_param()
+
+def unpack_def():
+    pet = states.StateCalculator()
+    return pet.create_new_creature().__dir__()
+
+
+
+
+# @mark.parametrize('arg', 'exp_res', [(arg, unpack_def()),
+#                                      (arg, unpack_def()),
+#                                      (arg, unpack_def()),
+#                                      (arg, unpack_def()),])
+class TestCreature:
+    @staticmethod
+    def test_foo(arg, unpack_def):
+        pass
+

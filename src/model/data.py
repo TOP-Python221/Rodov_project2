@@ -21,6 +21,7 @@ class PersistenceManager:
     @classmethod
     def read_parameters(cls, kind: constants.Kind, parameters_path: constants.pathlike = None) -> states.KindParameters:
         """"""
+
         if not parameters_path:
             parameters_path = cls.default_parameters_path
 
@@ -63,8 +64,8 @@ class PersistenceManager:
         with open(states_path, encoding='utf-8') as filein:
             data = jload(filein)
 
-        data['body_state']['timestamp'] = dt.strptime(data['body_state']['timestamp'], '%Y-%m-%d %H:%M:%S')
         data['mind_state']['timestamp'] = dt.strptime(data['mind_state']['timestamp'], '%Y-%m-%d %H:%M:%S')
+        data['body_state']['timestamp'] = dt.strptime(str(data['body_state']['timestamp']), '%Y-%m-%d %H:%M:%S')
 
         return states.StatesManager(
             constants.Kind(data['kind']),
@@ -85,7 +86,7 @@ class PersistenceManager:
 # тесты
 if __name__ == '__main__':
     d = PersistenceManager()
-    print(d.default_states_path)
+    print(d.read_states())
     # d = PersistenceManager.read_states()
     # print(d.mind_last.joy)
     # print(sm.__dict__, end='\n\n')

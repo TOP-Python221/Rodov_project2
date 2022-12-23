@@ -4,9 +4,9 @@ from datetime import datetime as dt
 from random import randrange as rr
 
 # импорт дополнительных модулей текущего пакета
+
 from src.model import creature
 from src.utils import constants
-from src.model import data
 
 
 class KindParameters:
@@ -147,8 +147,8 @@ class StatesManager:
 
 
 # УДАЛИТЬ: не так надо от закольцованного импорта избавляться, а разумным распределением кода по модулям
-# Избавляет от 'circular import'
-import data
+# Я, вроде, распределил код по модулям, но всё равно какая-то каша получилась :`(
+from src.model import data
 class StateCalculator:
     """Рассчитывает состояние зверька"""
     def __init__(self):
@@ -156,14 +156,18 @@ class StateCalculator:
 
 
     def create_new_creature(self) -> creature.Creature:
+        import data
         """Создаёт нового зверька"""
         # Так как питомец новый - интереса ради рандом распределит параметры для зверька
         self.body = creature.Body(rr(1, 6), rr(-1, 4), rr(-3, 5), rr(-3, 5))
         self.mind = creature.Mind(rr(-4, 4), rr(-3, 4), rr(0, 5))
-        self.kind = input('Введите один из доступных видов питомцев(cat - кот, dog - собака, '
-                          'fox - лиса, fox - лиса, bear - медведь, snake - змея, lizard - ящерица) >>> ').lower()
-        self.name = input('Введите имя питомца >>> ').lower()
-        self.birhdate = input('Дата рождения Вашего питомца(Г.М.Д) >>> ')
+        # self.kind = input('Введите один из доступных видов питомцев(cat - кот, dog - собака, '
+        #                   'fox - лиса, fox - лиса, bear - медведь, snake - змея, lizard - ящерица) >>> ').lower()
+        self.kind = 'cat'
+        # self.name = input('Введите имя питомца >>> ').lower()
+        self.name = 'кот'
+        # self.birhdate = input('Дата рождения Вашего питомца(Г.М.Д) >>> ')
+        self.birhdate = '2020-12-12'
         # new_creat = data.PersistenceManager.write_states() Где-то здесь должны быть занесены данные в json-файл о зверьке
         return creature.Creature(self.body, self.mind,
                                  self.kind, self.name,
@@ -194,5 +198,5 @@ class StateCalculator:
 # тесты:
 if __name__ == '__main__':
     pet = StateCalculator()
-    print(pet.revive_creature())
+    print(pet.create_new_creature().__dir__())
 
