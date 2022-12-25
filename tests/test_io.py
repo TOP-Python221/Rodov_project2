@@ -20,17 +20,17 @@ from src.model import states
 # ...
 
 
-def get_init_param() -> list:
-  """Берёт полный список атрибутов экземпляра класса и возвращает список переданных в конструктор значений"""
-  new_atrs = []
-  active_pet = PM()
-  saved_pet = active_pet.read_parameters(constants.Kind.CAT).__dir__()
-
-  for val in saved_pet:
-    if not val.startswith('__'):
-      new_atrs.append(val)
-
-  return new_atrs
+# def get_init_param() -> list:
+#   """Берёт полный список атрибутов экземпляра класса и возвращает список переданных в конструктор значений"""
+#   new_atrs = []
+#   active_pet = PM()
+#   saved_pet = active_pet.read_parameters(constants.Kind.CAT).__dir__()
+#
+#   for val in saved_pet:
+#     if not val.startswith('__'):
+#       new_atrs.append(val)
+#
+#   return new_atrs
 
 
 # Всё также на данный момент времени не разобрался с __eq__, поэтому тест, увы, такой. Как говорится: на безрыбье и
@@ -54,19 +54,30 @@ def get_init_param() -> list:
 #     assert ['title', 'maturity', 'cub', 'young', 'adult', 'elder', 'Ranges', 'age_ranges'] == get_init_param()
 
 
-def unpack_def():
+def get_init_param():
+    params = []
     pet = states.StateCalculator()
-    return pet.create_new_creature().__dir__()
+    for val in pet.create_new_creature().__dir__():
+        if not val.startswith('__'):
+            params.append(val)
 
+    return params
 
-
-
-# @mark.parametrize('arg', 'exp_res', [(arg, unpack_def()),
-#                                      (arg, unpack_def()),
-#                                      (arg, unpack_def()),
-#                                      (arg, unpack_def()),])
+@mark.xfail
+@mark.parametrize('arg, exp_res', [([], get_init_param()),
+                                   ({}, get_init_param()),
+                                   (['kind', 'name', '_Creature__birthdate', 'body', 'mind', 'age', 'tick_changes', 'feed', 'play',],
+                                    get_init_param()),
+                                   (1, get_init_param()),
+                                   ('str', get_init_param()),
+                                   (['unex_arg1', 'unex_arg2', 'kind', 'name', '_Creature__birthdate', 'body',
+                                      'mind', 'age',
+                                        'tick_changes', 'feed', 'play', 'talk', 'clean', 'action'], get_init_param())])
 class TestCreature:
     @staticmethod
-    def test_foo(arg, unpack_def):
-        pass
+    def test_unhappy_creat_creature(arg, exp_res):
+        assert arg == exp_res
 
+
+def test_happy_creat_creature():
+    assert ['kind', 'name', '_Creature__birthdate', 'body', 'mind', 'age', 'tick_changes', 'feed', 'play', 'talk', 'clean', 'action'] == get_init_param()
