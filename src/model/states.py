@@ -156,7 +156,6 @@ class StateCalculator:
 
 
     def create_new_creature(self) -> creature.Creature:
-        import data
         """Создаёт нового зверька"""
         # Так как питомец новый - интереса ради рандом распределит параметры для зверька
         self.body = creature.Body(rr(1, 6), rr(-1, 4), rr(-3, 5), rr(-3, 5))
@@ -166,7 +165,7 @@ class StateCalculator:
         self.kind = 'cat'
         # self.name = input('Введите имя питомца >>> ').lower()
         self.name = 'кот'
-        # self.birhdate = input('Дата рождения Вашего питомца(Г.М.Д) >>> ')
+        # self.birhdate = input('Дата рождения Вашего питомца(Год-Месяц-День) >>> ')
         self.birhdate = '2020-12-12'
         # new_creat = data.PersistenceManager.write_states() Где-то здесь должны быть занесены данные в json-файл о зверьке
         return creature.Creature(self.body, self.mind,
