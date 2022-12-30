@@ -1,5 +1,7 @@
 # импорт из стандартной библиотеки
-from datetime import datetime as dt, timedelta as td
+import datetime
+from datetime import datetime as dt, timedelta as td, date
+from random import choice
 
 # импорт дополнительных модулей текущего пакета
 from src.utils import constants
@@ -19,12 +21,6 @@ class Body:
         self.hunger = hunger
         self.thirst = thirst
 
-    # КОММЕНТАРИЙ: как раз потому что нет ясного представления "кто мы, и куда мы идём" — а за это представление отвечает модель =Ъ
-    # Пока не знаю как реализовать этот метод. :`(
-    def tick_changes(self) -> dict:
-        """Вычисляет и возвращает словарь с изменениями параметров питомца, которые должны быть применены по прошествии очередного субъективного часа."""
-
-
 
 class Mind:
     """
@@ -41,12 +37,12 @@ class Mind:
         self.anger = anger
 
     @property
-    def pattern(self):
-        pass
+    def get_pattern(self):
+        return self.anger
 
-    def tick_changes(self) -> dict:
-        """Вычисляет и возвращает словарь с изменениями параметров питомца, которые должны быть применены по прошествии очередного субъективного часа."""
-
+    @get_pattern.setter
+    def set_pattern(self, new_value):
+        self.anger = new_value
 
 
 class Creature:
@@ -61,7 +57,7 @@ class Creature:
                  kind: constants.Kind = None):
         self.kind = kind
         self.name = name
-        self.__birthdate = birthdate
+        self.birthdate = birthdate
         self.body = body_obj
         self.mind = mind_obj
 
@@ -69,18 +65,17 @@ class Creature:
         if not isinstance(other, Creature):
             raise TypeError('TypeError')
 
-        return self.kind == other.kind and self.name == other.name and self.__birthdate == other.__birthdate and \
+        return self.kind == other.kind and self.name == other.name and self.birthdate == other.birthdate and \
                self.body == other.body and \
                self.mind == other.mind
 
-
-
     @property
-    def age(self) -> td:
-        return (dt.now() - self.__birthdate).days
+    def age(self) -> int:
+        return (dt.now() - self.birthdate).days
 
     def tick_changes(self) -> dict:
         """Вычисляет и возвращает словарь с изменениями параметров питомца, которые должны быть применены по прошествии очередного субъективного часа."""
+        pass
 
 
     # КОММЕНТАРИЙ: можно, кстати, добавить отдельную ветку классов видов пищи, которые по-разному влияют на разных существ...)) так или иначе, какие-то виды пищи всё равно нужны, иначе как тогда понимать, какие значения должны передаваться в этот метод
@@ -104,31 +99,37 @@ class Creature:
         self.mind.anger -= clean_amount
 
     def action(self):
-        pass
+        """"""
+        random_action = choice(self._actions)
+        random_action(self)
 
 
 class CreatureActions(Creature):
-    """Класс-контейнер для функций-активностей для зверька"""
+    """Класс-контейнер для функций-активностей зверька"""
     def __init__(self, name, birthdate,
                  body_obj, mind_obj,
                  kind_actions: constants.KindActions):
         super().__init__(name, birthdate, body_obj, mind_obj)
         self.kind_actions = kind_actions
 
-    def seek_for_honey(self) -> str:
+    @staticmethod
+    def seek_for_honey() -> str:
         return "Ваш питомец ищет вкусняшку =^_^="
 
-    def be_a_cat(self) -> str:
+    @staticmethod
+    def be_a_cat() -> str:
         return "Ваша кошка делает 'тыгыдык' 0_o"
 
-    def be_a_naughty_cat(self) -> str:
+    @staticmethod
+    def be_a_naughty_cat() -> str:
         return "Ваша кошка сдирает диван >:X"
 
 
 if __name__ == '__main__':
-    cr = Creature('', '', '', '')
-    cr2 = Creature('', '', '', '')
-    print(cr == cr2)
+    cr = Creature('', datetime.datetime(2021, 12, 12), '', '')
+    print(cr.age)
+    # cr2 = Creature('', '', '', '')
+    # print(cr == cr2)
     # print(cr.age)
     # print(cr.__dict__['_Creature__birthdate'])
     # print(type(dt.now().day))
