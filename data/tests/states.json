@@ -3,14 +3,14 @@
   "name": "Кусик",
   "birthdate": "2022-11-24 10:00:00",
   "mind_state": {
-    "timestamp": "2022-11-26 17:30:00",
+    "timestamp": "2022-11-26 17:30:00.076488",
     "joy": 60,
     "activity": 1.3,
     "anger": 10,
     "anxiety": 0.9
   },
   "body_state": {
-    "timestamp": "2022-11-26 17:30:00",
+    "timestamp": "2022-11-26 17:30:00.076488",
     "health": 19,
     "stamina": 28,
     "hunger": 5,

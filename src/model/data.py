@@ -16,7 +16,7 @@ class PersistenceManager:
     """
     # Вроде, исправил :)
     default_parameters_path = constants.BASE_DIR / 'data/tests/parameters.json'
-    default_states_path = constants.BASE_DIR / 'data/states.json'
+    default_states_path = constants.BASE_DIR / 'data/tests/states.json'
 
     @classmethod
     def read_parameters(cls, kind: constants.Kind, parameters_path: constants.pathlike = None) -> states.KindParameters:
