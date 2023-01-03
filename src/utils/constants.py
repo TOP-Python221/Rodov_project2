@@ -1,4 +1,5 @@
 # импорт из стандартной библиотеки
+from collections.abc import Sequence, Callable
 from enum import Enum
 from pathlib import Path
 from re import compile as reg_pattern_compile
@@ -33,6 +34,7 @@ print(BASE_DIR)
 pathlike = Union[str, Path]
 ParamRanges = Tuple[Tuple[int, int], ...]
 KindActions = Dict[Kind, 'Sequence[Callable]']
+Actions = Sequence[Callable]
 
 separated_floats_pattern = reg_pattern_compile(
     r'^((?P<float>\d+\.\d+)(?P<sep>[,; ])?){2,}$'
@@ -40,3 +42,5 @@ separated_floats_pattern = reg_pattern_compile(
 
 ACTIVE_STATE_KEYS = {'timestamp', 'health', 'stamina', 'hunger', 'thirst', 'intestine', 'joy', 'activity', 'anger', 'anxiety'}
 
+HELP = ['Выйти из приложения: q/quit/выход\n',
+        'Посмотреть чем занимается питомец: w/watch/посмотреть\n',]
