@@ -40,9 +40,9 @@ class Controller:
                         print('Котик обиделся')
                         rand_anger = rr(10, 21)
 
-                        new_val = self.data_active_pet
+                        last_data = self.data_active_pet
                         print(f'Уровень злости вырос на {rand_anger}. Текущий уровень злости'
-                              f' {new_val.mind_last.anger + rand_anger}')
+                              f' {last_data.mind_last.anger + rand_anger}')
 #                       Я чё-то не додумался как можно более лаконично и красиво всё это записать :(
 #                       Совсем уже отупел :P
 # ========================================================================
@@ -54,7 +54,7 @@ class Controller:
                                 "timestamp": "2022-11-26 17:30:00",
                                 "joy": 60 - 15,
                                 "activity": 1.3,
-                                "anger": 10 + rand_anger,
+                                "anger": last_data.mind_last.anger + rand_anger,
                                 "anxiety": 0.9
                             },
                             "body_state": {
