@@ -54,7 +54,11 @@ class Creature:
                  birthdate: dt,
                  body_obj: Body,
                  mind_obj: Mind,
+                 # actions: constants.Actions,
                  kind: constants.Kind = None):
+        self._actions = [CreatureActions.be_a_naughty_cat(),
+                         CreatureActions.be_a_cat(),
+                         CreatureActions.seek_for_honey()]
         self.kind = kind
         self.name = name
         self.birthdate = birthdate
@@ -101,7 +105,7 @@ class Creature:
     def action(self):
         """"""
         random_action = choice(self._actions)
-        random_action(self)
+        return random_action
 
 
 class CreatureActions(Creature):
