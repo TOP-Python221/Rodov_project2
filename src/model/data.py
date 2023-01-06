@@ -9,7 +9,7 @@ from src.model import creature
 from src.utils import constants
 
 
-# Перенёс всё содержимое файла states.py в data.py, тк не смог по-нормальному
+# Перенёс всё содержимое файла states в data.py, тк не смог по-нормальному
 # избавиться от закольцованного импорта :(
 
 
@@ -140,30 +140,31 @@ class StatesManager:
                 'mind_last': self.mind_last.to_dict()}
 
 
-# УДАЛИТЬ: не так надо от закольцованного импорта избавляться, а разумным распределением кода по модулям
-# Я, вроде, распределил код по модулям, но всё равно какая-то каша получилась :`(
 class StateCalculator:
     """Рассчитывает состояние зверька"""
     def __init__(self):
         self.last = PersistenceManager.read_states()
 
-
-    def create_new_creature(self) -> creature.Creature:
+    def create_new_creature(self) -> 'Creature':
         """Создаёт нового зверька"""
         # Так как питомец новый - интереса ради рандом распределит параметры для зверька
         self.body = creature.Body(rr(1, 6), rr(-1, 4), rr(-3, 5), rr(-3, 5))
+
         self.mind = creature.Mind(rr(-4, 4), rr(-3, 4), rr(0, 5))
-        self.kind = input('Введите один из доступных видов питомцев(cat - кот, dog - собака, '
-                          'fox - лиса, fox - лиса, bear - медведь, snake - змея, lizard - ящерица) >>> ').lower()
-        # self.kind = 'cat'
-        self.name = input('Введите имя питомца >>> ').lower()
-        # self.name = 'кот'
-        self.birhdate = input('Дата рождения Вашего питомца(Год-Месяц-День) >>> ')
-        # self.birhdate = '2020-12-12'
+
+        # self.kind = input('Введите один из доступных видов питомцев(cat - кот, dog - собака, '
+                          # 'fox - лиса, fox - лиса, bear - медведь, snake - змея, lizard - ящерица) >>> ').lower()
+        self.kind = 'cat'
+
+        # self.name = input('Введите имя питомца >>> ').lower()
+        self.name = 'кот'
+
+        # self.birhdate = input('Дата рождения Вашего питомца(Год-Месяц-День) >>> ')
+        self.birhdate = '2020-12-12'
         PersistenceManager.write_states({
             "kind": self.kind,
             "name": self.name,
-            "birthdate": self.birhdate,
+            "birthdate": self.birhdate + ' 00:00:00',
             "mind_state": {
                 "timestamp": "2022-11-26 17:30:00",
                 "joy": self.mind.joy,
@@ -184,20 +185,20 @@ class StateCalculator:
                                  self.body, self.mind,
                                  self.kind)
 
-    def __revive_body(self) -> creature.Body:
+    def __revive_body(self) -> 'Body':
         """Вычисляет мгновенные значения параметров Body после загрузки данных из файлов состояний"""
         return creature.Body(self.last.body_last.health,
                              self.last.body_last.stamina,
                              self.last.body_last.hunger,
                              self.last.body_last.thirst)
 
-    def __revive_mind(self) -> creature.Mind:
+    def __revive_mind(self) -> 'Mind':
         """Вычисляет мгновенные значения параметров Mind после загрузки данных из файлов состояний"""
         return creature.Mind(self.last.mind_last.anxiety,
                              self.last.mind_last.joy,
                              self.last.mind_last.anger)
 
-    def revive_creature(self) -> creature.Creature:
+    def revive_creature(self) -> 'Creature':
         """Считывает последние состояния Mind, Body зверька и возвращает новые значения"""
         return creature.Creature(self.last.name,
                                  self.last.birthdate,
@@ -280,4 +281,4 @@ class PersistenceManager:
 # тесты
 if __name__ == '__main__':
     st = StateCalculator()
-    st.create_new_creature()
+    print(st.create_new_creature().play(2))

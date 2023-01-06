@@ -125,7 +125,6 @@ class StatesManager {
     +body_last: BodyState
     +mind_last: MindState
     +to_dict()
-    {method}<i>?? новорождённое существо ??</i>
 }
 StatesManager::kind o-- Kind
 StatesManager::mind_last o-- MindState
