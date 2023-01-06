@@ -2,10 +2,10 @@
 import datetime
 from datetime import datetime as dt, timedelta as td, date
 from random import choice
+from random import randrange as rr
 
 # импорт дополнительных модулей текущего пакета
 from src.utils import constants
-
 
 class Body:
     """
@@ -54,16 +54,15 @@ class Creature:
                  birthdate: dt,
                  body_obj: Body,
                  mind_obj: Mind,
-                 # actions: constants.Actions,
                  kind: constants.Kind = None):
-        self._actions = [CreatureActions.be_a_naughty_cat(),
-                         CreatureActions.be_a_cat(),
-                         CreatureActions.seek_for_honey()]
-        self.kind = kind
         self.name = name
         self.birthdate = birthdate
         self.body = body_obj
         self.mind = mind_obj
+        self.kind = kind
+        self._actions = [CreatureActions.be_a_naughty_cat(),
+                         CreatureActions.be_a_cat(),
+                         CreatureActions.seek_for_honey()]
 
     def __eq__(self, other):
         if not isinstance(other, Creature):
@@ -79,7 +78,13 @@ class Creature:
 
     def tick_changes(self) -> dict:
         """Вычисляет и возвращает словарь с изменениями параметров питомца, которые должны быть применены по прошествии очередного субъективного часа."""
-        pass
+        return {self.body.hunger + rr(-10, 10),
+                self.body.stamina + rr(-10, 10),
+                self.body.thirst + rr(-10, 10),
+                self.body.health + rr(-10, 10),
+                self.mind.anger + rr(-10, 10),
+                self.mind.anxiety + rr(-10, 10),
+                self.mind.joy + rr(-10, 10)}
 
 
     # КОММЕНТАРИЙ: можно, кстати, добавить отдельную ветку классов видов пищи, которые по-разному влияют на разных существ...)) так или иначе, какие-то виды пищи всё равно нужны, иначе как тогда понимать, какие значения должны передаваться в этот метод
@@ -89,9 +94,11 @@ class Creature:
         self.mind.anger -= food_amount
 
     def play(self, enjoy_amount: int) -> None:
+        # print('ДО: ' + str(self.body.stamina), str(self.mind.joy), str(self.mind.anger))
         self.body.stamina -= enjoy_amount
         self.mind.joy += enjoy_amount
         self.mind.anger -= enjoy_amount
+        # print('ПОСЛЕ: ' + str(self.body.stamina), str(self.mind.joy), str(self.mind.anger))
 
     def talk(self, conver_amount) -> None:
         # КОММЕНТАРИЙ: я бы ещё сказал, что разговор уменьшает тревожность — впрочем, это зависит от вида питомца, от его возраста — вполне вероятно я бы сказал, что такие значения необходимо учитывать в параметрической модели (и, соответственно, в KindParameters) — но можно обойтись и константами
@@ -130,8 +137,7 @@ class CreatureActions(Creature):
 
 
 if __name__ == '__main__':
-    cr = Creature('', datetime.datetime(2021, 12, 12), '', '')
-    print(cr.age)
+    cr = Creature('kot', datetime.datetime(2021, 12, 12), '', '')
     # cr2 = Creature('', '', '', '')
     # print(cr == cr2)
     # print(cr.age)
