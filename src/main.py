@@ -21,31 +21,58 @@ class Controller:
         every(tick_interval).seconds.do(creature.Creature.tick_changes)
         stop_background = Event()
         # ...
-        print(self.active_pet.birthdate)
 
         while True:
             last_data = self.data_active_pet
-            print('Если Вы хотите узнать доступные команды введите Помощь/Help')
+            print('Если Вы хотите узнать доступные команды введите h/Помощь/Help')
             command = input(' >>> ').lower()
 
             if command == 'quit' or command == 'q' or command == 'выход':
                 break
 
+            elif command == 'play' or command =='p':
+                print(f'{last_data.name} обрадовался! =^_^= <З')
+                play_value_stamina = self.active_pet.play()[0]
+                play_value_joy = self.active_pet.play()[1]
+                play_value_anger = self.active_pet.play()[2]
+                print(f'Стамина уменьшилась на {play_value_stamina} единиц. Текущий уровень стамины '
+                      f'{last_data.body_last.stamina - play_value_stamina}')
+                print(f'Злость уменьшилась на {play_value_anger} единиц. Текущий уровень злости '
+                      f'{last_data.mind_last.anger - play_value_anger}')
+                print(f'Радость увеличилась на {play_value_joy} единиц. Текущий уровень радости '
+                      f'{last_data.mind_last.joy + play_value_joy}')
+                data.PersistenceManager.write_states({
+                    "kind": str(last_data.kind.value),
+                    "name": str(last_data.name),
+                    "birthdate": str(last_data.birthdate),
+                    "mind_state": {
+                        "timestamp": str(last_data.mind_last.timestamp),
+                        "joy": last_data.mind_last.joy + play_value_joy,
+                        "activity": last_data.mind_last.activity,
+                        "anger": last_data.mind_last.anger - play_value_anger,
+                        "anxiety": last_data.mind_last.anxiety
+                    },
+                    "body_state": {
+                        "timestamp": str(last_data.body_last.timestamp),
+                        "health": last_data.body_last.health,
+                        "stamina": last_data.body_last.stamina - play_value_stamina,
+                        "hunger": last_data.body_last.hunger,
+                        "thirst": last_data.body_last.thirst,
+                        "intestine": last_data.body_last.intestine
+                    }
+                })
+
             elif command == 'watch' or command == 'w' or command == 'посмотреть':
                 print(self.active_pet.action())
-                print(last_data.birthdate)
                 if self.active_pet.action() == "Ваша кошка сдирает диван >:X":
                     # Немного криво работает - рандомно реагирует на условие выше
-                    print('Ваши действия?: ignore - пригнорировать; hit - дать по сраке')
+                    print('Ваши действия?: i/ignore - пригнорировать; p/punish - наказать')
                     command = input(' >>> ')
 
-                    if command == 'hit':
-                        print(last_data.birthdate)
-                        print('Котик обиделся')
-
+                    if command == 'punish' or command == 'p':
+                        print(f'{last_data.name} обиделся')
                         rand_anger = rr(10, 21)
-                        print(rand_anger)
-                        print(f'Уровень злости вырос на {rand_anger}. Текущий уровень злости'
+                        print(f'Злость увеличилась на {rand_anger} единиц. Текущий уровень злости'
                               f' {last_data.mind_last.anger + rand_anger}')
 #                       Я чё-то не додумался как можно более лаконично и красиво всё это записать :(
 #                       Совсем уже отупел :P
@@ -71,7 +98,7 @@ class Controller:
                             }
                         })
 # ========================================================================
-            elif command == 'help' or command == 'помощь':
+            elif command == 'help' or command == 'помощь' or command == 'h':
                 print(*constants.HELP)
 
             elif command == 's' or command == 'state' or command == 'состояние':
