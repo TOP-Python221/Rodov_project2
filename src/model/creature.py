@@ -89,25 +89,28 @@ class Creature:
 
     # КОММЕНТАРИЙ: можно, кстати, добавить отдельную ветку классов видов пищи, которые по-разному влияют на разных существ...)) так или иначе, какие-то виды пищи всё равно нужны, иначе как тогда понимать, какие значения должны передаваться в этот метод
 
-    def feed(self, food_amount: int) -> None:
-        self.body.hunger -= food_amount
-        self.mind.anger -= food_amount
+    def feed(self) -> tuple:
+        self.body.hunger = rr(10, 18)
+        self.mind.anger = rr(5, 12)
+        return self.body.hunger, self.mind.anger
 
     # В ближайшее свободное время исправлю реализации других соседствующих методов :)
-    def play(self) -> None:
-        self.body.stamina -= rr(-15, -4)
-        self.mind.joy += rr(5, 14)
-        self.mind.anger -= rr(3, 11)
+    def play(self) -> tuple:
+        self.body.stamina = rr(4, 15)
+        self.mind.joy = rr(5, 14)
+        self.mind.anger = rr(3, 11)
         return self.body.stamina, self.mind.joy, self.mind.anger
 
-    def talk(self, conver_amount) -> None:
+    def talk(self) -> tuple:
         # КОММЕНТАРИЙ: я бы ещё сказал, что разговор уменьшает тревожность — впрочем, это зависит от вида питомца, от его возраста — вполне вероятно я бы сказал, что такие значения необходимо учитывать в параметрической модели (и, соответственно, в KindParameters) — но можно обойтись и константами
-        self.mind.anger -= conver_amount
-        self.mind.joy += conver_amount
-        self.mind.anxiety -= conver_amount
+        self.mind.anger = rr(1, 7)
+        self.mind.joy = rr(0, 5)
+        self.mind.anxiety = rr(3, 11)
+        return self.mind.anger, self.mind.joy, self.mind.anxiety
 
-    def clean(self, clean_amount) -> None:
-        self.mind.anger -= clean_amount
+    def clean(self) -> tuple:
+        self.mind.anger = rr(1, 8)
+        return self.mind.anger
 
     def action(self):
         """"""
