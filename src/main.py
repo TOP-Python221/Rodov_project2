@@ -21,8 +21,10 @@ class Controller:
         every(tick_interval).seconds.do(creature.Creature.tick_changes)
         stop_background = Event()
         # ...
+        print(self.active_pet.birthdate)
 
         while True:
+            last_data = self.data_active_pet
             print('Если Вы хотите узнать доступные команды введите Помощь/Help')
             command = input(' >>> ').lower()
 
@@ -31,34 +33,36 @@ class Controller:
 
             elif command == 'watch' or command == 'w' or command == 'посмотреть':
                 print(self.active_pet.action())
-
+                print(last_data.birthdate)
                 if self.active_pet.action() == "Ваша кошка сдирает диван >:X":
                     # Немного криво работает - рандомно реагирует на условие выше
                     print('Ваши действия?: ignore - пригнорировать; hit - дать по сраке')
                     command = input(' >>> ')
 
                     if command == 'hit':
+                        print(last_data.birthdate)
                         print('Котик обиделся')
+
                         rand_anger = rr(10, 21)
-                        last_data = self.data_active_pet
+                        print(rand_anger)
                         print(f'Уровень злости вырос на {rand_anger}. Текущий уровень злости'
                               f' {last_data.mind_last.anger + rand_anger}')
 #                       Я чё-то не додумался как можно более лаконично и красиво всё это записать :(
 #                       Совсем уже отупел :P
 # ========================================================================
                         data.PersistenceManager.write_states({
-                            "kind": last_data.kind,
-                            "name": last_data.name,
-                            "birthdate": last_data.birthdate,
+                            "kind": str(last_data.kind.value),
+                            "name": str(last_data.name),
+                            "birthdate": str(last_data.birthdate),
                             "mind_state": {
-                                "timestamp": last_data.mind_last.timestamp,
+                                "timestamp": str(last_data.mind_last.timestamp),
                                 "joy": last_data.mind_last.joy,
                                 "activity": last_data.mind_last.activity,
                                 "anger": last_data.mind_last.anger + rand_anger,
                                 "anxiety": last_data.mind_last.anxiety
                             },
                             "body_state": {
-                                "timestamp": last_data.body_last.timestamp,
+                                "timestamp": str(last_data.body_last.timestamp),
                                 "health": last_data.body_last.health,
                                 "stamina": last_data.body_last.stamina,
                                 "hunger": last_data.body_last.hunger,
