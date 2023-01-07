@@ -93,12 +93,12 @@ class Creature:
         self.body.hunger -= food_amount
         self.mind.anger -= food_amount
 
-    def play(self, enjoy_amount: int) -> None:
-        # print('ДО: ' + str(self.body.stamina), str(self.mind.joy), str(self.mind.anger))
-        self.body.stamina -= enjoy_amount
-        self.mind.joy += enjoy_amount
-        self.mind.anger -= enjoy_amount
-        # print('ПОСЛЕ: ' + str(self.body.stamina), str(self.mind.joy), str(self.mind.anger))
+    # В ближайшее свободное время исправлю реализации других соседствующих методов :)
+    def play(self) -> None:
+        self.body.stamina -= rr(-15, -4)
+        self.mind.joy += rr(5, 14)
+        self.mind.anger -= rr(3, 11)
+        return self.body.stamina, self.mind.joy, self.mind.anger
 
     def talk(self, conver_amount) -> None:
         # КОММЕНТАРИЙ: я бы ещё сказал, что разговор уменьшает тревожность — впрочем, это зависит от вида питомца, от его возраста — вполне вероятно я бы сказал, что такие значения необходимо учитывать в параметрической модели (и, соответственно, в KindParameters) — но можно обойтись и константами
@@ -137,7 +137,7 @@ class CreatureActions(Creature):
 
 
 if __name__ == '__main__':
-    cr = Creature('kot', datetime.datetime(2021, 12, 12), '', '')
+    ''''''
     # cr2 = Creature('', '', '', '')
     # print(cr == cr2)
     # print(cr.age)
