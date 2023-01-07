@@ -152,8 +152,8 @@ class StateCalculator:
 
         self.mind = creature.Mind(rr(-4, 4), rr(-3, 4), rr(0, 5))
 
-        # self.kind = input('Введите один из доступных видов питомцев(cat - кот, dog - собака, '
-                          # 'fox - лиса, fox - лиса, bear - медведь, snake - змея, lizard - ящерица) >>> ').lower()
+        # self.kind = input('Введите один из доступных видов питомца(cat - кот, dog - собака, '
+                          # , fox - лиса, bear - медведь, snake - змея, lizard - ящерица) >>> ').lower()
         self.kind = 'cat'
 
         # self.name = input('Введите имя питомца >>> ').lower()
@@ -281,4 +281,4 @@ class PersistenceManager:
 # тесты
 if __name__ == '__main__':
     st = StateCalculator()
-    print(st.create_new_creature().play(2))
+    print(st.create_new_creature().play())
