@@ -42,4 +42,5 @@ separated_floats_pattern = reg_pattern_compile(
 ACTIVE_STATE_KEYS = {'timestamp', 'health', 'stamina', 'hunger', 'thirst', 'intestine', 'joy', 'activity', 'anger', 'anxiety'}
 
 HELP = ['Выйти из приложения: q/quit/выход\n',
-        'Посмотреть чем занимается питомец: w/watch/посмотреть\n',]
+        'Посмотреть чем занимается питомец: w/watch/посмотреть\n',
+        'Поиграть с питомцем: p/play']
