@@ -47,23 +47,23 @@ class Controller:
 #                       Совсем уже отупел :P
 # ========================================================================
                         data.PersistenceManager.write_states({
-                            "kind": "cat",
-                            "name": "Кусик",
-                            "birthdate": "2022-11-24 10:00:00",
+                            "kind": last_data.kind,
+                            "name": last_data.name,
+                            "birthdate": last_data.birthdate,
                             "mind_state": {
-                                "timestamp": "2022-11-26 17:30:00",
-                                "joy": 60,
-                                "activity": 1.3,
+                                "timestamp": last_data.mind_last.timestamp,
+                                "joy": last_data.mind_last.joy,
+                                "activity": last_data.mind_last.activity,
                                 "anger": last_data.mind_last.anger + rand_anger,
-                                "anxiety": 0.9
+                                "anxiety": last_data.mind_last.anxiety
                             },
                             "body_state": {
-                                "timestamp": "2022-11-26 17:30:00",
-                                "health": 19,
-                                "stamina": 28,
-                                "hunger": 5,
-                                "thirst": 0,
-                                "intestine": 14
+                                "timestamp": last_data.body_last.timestamp,
+                                "health": last_data.body_last.health,
+                                "stamina": last_data.body_last.stamina,
+                                "hunger": last_data.body_last.hunger,
+                                "thirst": last_data.body_last.thirst,
+                                "intestine": last_data.body_last.intestine
                             }
                         })
 # ========================================================================
