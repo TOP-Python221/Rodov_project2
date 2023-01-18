@@ -6,6 +6,7 @@ from random import randrange as rr
 
 # импорт дополнительных модулей текущего пакета
 from src.utils import constants
+from src.model import data
 
 class Body:
     """
@@ -73,18 +74,54 @@ class Creature:
                self.mind == other.mind
 
     @property
+    def get_actions(self) -> list:
+        return self._actions
+
+    @property
     def age(self) -> int:
         return (dt.now() - self.birthdate).days
 
     def tick_changes(self) -> dict:
         """Вычисляет и возвращает словарь с изменениями параметров питомца, которые должны быть применены по прошествии очередного субъективного часа."""
-        return {self.body.hunger + rr(-10, 10),
-                self.body.stamina + rr(-10, 10),
-                self.body.thirst + rr(-10, 10),
-                self.body.health + rr(-10, 10),
-                self.mind.anger + rr(-10, 10),
-                self.mind.anxiety + rr(-10, 10),
-                self.mind.joy + rr(-10, 10)}
+        changed_hunger = self.body.hunger + rr(-10, 10)
+        changed_stamina = self.body.stamina + rr(-10, 10)
+        changed_thirst = self.body.thirst + rr(-10, 10)
+        changed_health = self.body.health + rr(-10, 10)
+        changed_anger = self.mind.anger + rr(-10, 10)
+        changed_anxiety = self.mind.anxiety + rr(-10, 10)
+        changed_joy= self.mind.joy + rr(-10, 10)
+
+        read_last_state = data.PersistenceManager.read_states()
+
+        changed_pet = data.PersistenceManager.write_states({
+            "kind": str(read_last_state.kind.value),
+            "name": str(read_last_state.name.title()),
+            "birthdate": str(read_last_state.birthdate),
+            "mind_state": {
+                "timestamp": str(read_last_state.mind_last.timestamp),
+                "joy": read_last_state.mind_last.joy + changed_joy,
+                "activity": read_last_state.mind_last.activity,
+                "anger": read_last_state.mind_last.anger + changed_anger ,
+                "anxiety": read_last_state.mind_last.anxiety + changed_anxiety
+            },
+            "body_state": {
+                "timestamp": str(read_last_state.body_last.timestamp),
+                "health": read_last_state.body_last.health + changed_health,
+                "stamina": read_last_state.body_last.stamina + changed_stamina,
+                "hunger": read_last_state.body_last.hunger + changed_hunger,
+                "thirst": read_last_state.body_last.thirst + changed_thirst,
+                "intestine": read_last_state.body_last.intestine
+            }
+        })
+
+        return changed_pet
+        # return {'hunger': self.body.hunger + rr(-10, 10),
+        #         'stamina': self.body.stamina + rr(-10, 10),
+        #         'thirst': self.body.thirst + rr(-10, 10),
+        #         'health': self.body.health + rr(-10, 10),
+        #         'anger': self.mind.anger + rr(-10, 10),
+        #         'anxiety': self.mind.anxiety + rr(-10, 10),
+        #         'joy': self.mind.joy + rr(-10, 10)}
 
 
     # КОММЕНТАРИЙ: можно, кстати, добавить отдельную ветку классов видов пищи, которые по-разному влияют на разных существ...)) так или иначе, какие-то виды пищи всё равно нужны, иначе как тогда понимать, какие значения должны передаваться в этот метод
