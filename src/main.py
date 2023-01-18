@@ -25,12 +25,34 @@ class Controller:
         while True:
             last_data = self.data_active_pet
             # Я не могу найти причину, по которой у меня неправильно расчитываются значения
-            # Засчитываются не текущие расчитанные значение, а разница между двумя последними текущими расчитанными
+            # Засчитываются не текущие расчитанные значение, а разница между двумя последними расчитанными
             # значениями
             print('Если Вы хотите узнать доступные команды введите h/Помощь/Help')
             command = input(' >>> ').lower()
 
             if command == 'quit' or command == 'q' or command == 'выход':
+                last_pet_state = data.PersistenceManager.read_states()
+                data.PersistenceManager.write_states({
+                    "kind": str(last_pet_state.kind.value),
+                    "name": str(last_pet_state.name.title()),
+                    "birthdate": str(last_pet_state.birthdate),
+                    "mind_state": {
+                        "timestamp": str(last_pet_state.mind_last.timestamp),
+                        "joy": last_pet_state.mind_last.joy,
+                        "activity": last_pet_state.mind_last.activity,
+                        "anger": last_pet_state.mind_last.anger,
+                        "anxiety": last_pet_state.mind_last.anxiety
+                    },
+                    "body_state": {
+                        "timestamp": str(last_pet_state.body_last.timestamp),
+                        "health": last_pet_state.body_last.health,
+                        "stamina": last_pet_state.body_last.stamina,
+                        "hunger": last_pet_state.body_last.hunger,
+                        "thirst": last_pet_state.body_last.thirst,
+                        "intestine": last_pet_state.body_last.intestine
+                    }
+                })
+                print(f'{last_pet_state.name.title()}: "я тебя буду ждать! Возвращайся поскорее!"')
                 break
 
             elif command == 'play' or command =='p':
@@ -39,7 +61,7 @@ class Controller:
                 play_value_joy = self.active_pet.play()[1]
                 play_value_anger = self.active_pet.play()[2]
 
-                print(f'{last_data.name} обрадовался! =^_^= <З')
+                print(f'{last_data.name.title()} обрадовался! =^_^= <З')
                 print(f'Стамина уменьшилась на {play_value_stamina} единиц. Текущий уровень стамины '
                       f'{last_data.body_last.stamina - play_value_stamina}')
                 print(f'Злость уменьшилась на {play_value_anger} единиц. Текущий уровень злости '
@@ -48,7 +70,7 @@ class Controller:
                       f'{last_data.mind_last.joy + play_value_joy}')
                 data.PersistenceManager.write_states({
                     "kind": str(last_data.kind.value),
-                    "name": str(last_data.name),
+                    "name": str(last_data.name.title()),
                     "birthdate": str(last_data.birthdate),
                     "mind_state": {
                         "timestamp": str(last_data.mind_last.timestamp),
@@ -72,7 +94,7 @@ class Controller:
                 talk_value_joy = self.active_pet.talk()[1]
                 talk_value_anxiety = self.active_pet.talk()[1]
 
-                print(f'{last_data.name}: "было приятно с тобой побеседовать! ;)"')
+                print(f'{last_data.name.title()}: "было приятно с тобой побеседовать! ;)"')
                 print(f'Злость уменьшилась на {talk_value_anger} единиц. Текущий уровень злости '
                       f'{last_data.mind_last.anger + talk_value_anger}')
                 print(f'Радость увеличилась на {talk_value_joy} единиц. Текущий уровень радости '
@@ -82,7 +104,7 @@ class Controller:
 
                 data.PersistenceManager.write_states({
                     "kind": str(last_data.kind.value),
-                    "name": str(last_data.name),
+                    "name": str(last_data.name.title()),
                     "birthdate": str(last_data.birthdate),
                     "mind_state": {
                         "timestamp": str(last_data.mind_last.timestamp),
@@ -106,39 +128,40 @@ class Controller:
                 feed_value_hunger = self.active_pet.feed()[0]
                 feed_value_anger = self.active_pet.feed()[1]
 
-                print(f'{last_data.name}: "было очень вкусно! Спасибо!"')
+                print(f'{last_data.name.title()}: "было очень вкусно! Спасибо!"')
                 print(f'Уровень голода уменьшился на {feed_value_hunger}. Текущий уровень голода '
                       f'{last_data.body_last.hunger - feed_value_hunger}')
                 print(f'Злость уменьшилась на {feed_value_anger}. Текущий уровень золости '
                       f'{last_data.mind_last.anger - feed_value_anger}')
-
+                new_hunger_value = last_data.body_last.hunger - feed_value_hunger
+                new_anger_value = last_data.mind_last.anger - feed_value_anger
                 data.PersistenceManager.write_states({
                     "kind": str(last_data.kind.value),
-                    "name": str(last_data.name),
+                    "name": str(last_data.name.title()),
                     "birthdate": str(last_data.birthdate),
                     "mind_state": {
                         "timestamp": str(last_data.mind_last.timestamp),
                         "joy": last_data.mind_last.joy,
                         "activity": last_data.mind_last.activity,
-                        "anger": last_data.mind_last.anger + feed_value_anger,
+                        "anger": new_anger_value,
                         "anxiety": last_data.mind_last.anxiety
                     },
                     "body_state": {
                         "timestamp": str(last_data.body_last.timestamp),
                         "health": last_data.body_last.health,
                         "stamina": last_data.body_last.stamina,
-                        "hunger": last_data.body_last.hunger + feed_value_hunger,
+                        "hunger": new_hunger_value,
                         "thirst": last_data.body_last.thirst,
                         "intestine": last_data.body_last.intestine
                     }
                 })
 
             elif command == 'clean' or command == 'c':
-                print(f'{last_data.name} вами доволен! :D')
+                print(f'{last_data.name.title()} вами доволен! :D')
                 clean_value_anger = self.active_pet.clean()
                 data.PersistenceManager.write_states({
                     "kind": str(last_data.kind.value),
-                    "name": str(last_data.name),
+                    "name": str(last_data.name.title()),
                     "birthdate": str(last_data.birthdate),
                     "mind_state": {
                         "timestamp": str(last_data.mind_last.timestamp),
@@ -159,22 +182,20 @@ class Controller:
 
             elif command == 'watch' or command == 'w' or command == 'посмотреть':
                 print(self.active_pet.action())
-                if self.active_pet.action() == "Ваша кошка сдирает диван >:X":
+                if self.active_pet.action() == self.active_pet.get_actions[0]:
                     # Немного криво работает - рандомно реагирует на условие выше
-                    print('Ваши действия?: i/ignore - пригнорировать; p/punish - наказать')
+                    print('Ваши действия?: i/ignore - пригнорировать; pun/punish - наказать')
                     command = input(' >>> ')
 
                     if command == 'punish' or command == 'pun':
-                        print(f'{last_data.name} обиделся')
+                        print(f'{last_data.name.title()} обиделся')
                         rand_anger = rr(10, 21)
                         print(f'Злость увеличилась на {rand_anger} единиц. Текущий уровень злости'
                               f' {last_data.mind_last.anger + rand_anger}')
-#                       Я чё-то не додумался как можно более лаконично и красиво всё это записать :(
-#                       Совсем уже отупел :P
-# ========================================================================
+
                         data.PersistenceManager.write_states({
                             "kind": str(last_data.kind.value),
-                            "name": str(last_data.name),
+                            "name": str(last_data.name.title()),
                             "birthdate": str(last_data.birthdate),
                             "mind_state": {
                                 "timestamp": str(last_data.mind_last.timestamp),
@@ -192,7 +213,7 @@ class Controller:
                                 "intestine": last_data.body_last.intestine
                             }
                         })
-# ========================================================================
+
             elif command == 'help' or command == 'помощь' or command == 'h':
                 print(*constants.HELP)
 
