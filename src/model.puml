@@ -41,6 +41,7 @@ class Creature {
     +age
     __
     -tick_changes() -> dict
+    +apply_tick_changes
     +feed()
     +play()
     +talk()
@@ -48,6 +49,7 @@ class Creature {
 }
 Creature <|-- CreatureActions
 Creature::kind o-- KindParameters
+Creature --|> Controller
 
 
 class CreatureActions {
@@ -105,11 +107,14 @@ class BodyState {
     +stamina: int
     +hunger: int
     +thirst: int
+    +intestine: int
     +to_dict()
 }
 
 
 class MindState {
+    +anxiety: int
+    +activity: int
     +timestamp: dt
     +joy: int
     +anger: int
@@ -165,5 +170,9 @@ class PersistenceManager {
 PersistenceManager --> StatesManager
 PersistenceManager --> KindParameters
 
+
+class Controller{
+    +mainloop()
+}
 
 @enduml
