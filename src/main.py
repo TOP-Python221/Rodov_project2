@@ -1,5 +1,6 @@
 # импорт из стандартной библиотеки
 from schedule import every
+import schedule
 from threading import Event
 from random import randrange as rr
 
@@ -18,16 +19,23 @@ class Controller:
             self.active_pet = data.StateCalculator().create_new_creature()
 
     def mainloop(self, tick_interval: int = 900, thread_interval: float = 90):
-        every(tick_interval).seconds.do(creature.Creature.tick_changes)
+
         stop_background = Event()
         # ...
+        mainloop_pet = creature.Creature(self.active_pet.name,
+                                         self.active_pet.birthdate,
+                                         self.active_pet.body,
+                                         self.active_pet.mind,
+                                         self.active_pet.kind.value)
 
         while True:
+            schedule.every(tick_interval).seconds.do(mainloop_pet.apply_tick_changes)
+            schedule.run_pending()
             last_data = self.data_active_pet
             # Я не могу найти причину, по которой у меня неправильно расчитываются значения
             # Засчитываются не текущие расчитанные значение, а разница между двумя последними расчитанными
             # значениями
-            print('Если Вы хотите узнать доступные команды введите h/Помощь/Help')
+            print('Список досутпных команд: h/Помощь/Help')
             command = input(' >>> ').lower()
 
             if command == 'quit' or command == 'q' or command == 'выход':
@@ -90,13 +98,14 @@ class Controller:
                 })
 
             elif command == 'talk' or command == 't':
+
                 talk_value_anger = self.active_pet.talk()[0]
                 talk_value_joy = self.active_pet.talk()[1]
                 talk_value_anxiety = self.active_pet.talk()[1]
 
                 print(f'{last_data.name.title()}: "было приятно с тобой побеседовать! ;)"')
                 print(f'Злость уменьшилась на {talk_value_anger} единиц. Текущий уровень злости '
-                      f'{last_data.mind_last.anger + talk_value_anger}')
+                      f'{last_data.mind_last.anger  + talk_value_anger}')
                 print(f'Радость увеличилась на {talk_value_joy} единиц. Текущий уровень радости '
                       f'{last_data.mind_last.joy + talk_value_joy}')
                 print(f'Тревожность уменьшилась на {talk_value_anxiety} единиц. Текущий уровень тревожности '
@@ -127,12 +136,23 @@ class Controller:
 
                 feed_value_hunger = self.active_pet.feed()[0]
                 feed_value_anger = self.active_pet.feed()[1]
+                feed_value_intestine = self.active_pet.feed()[2]
+                # Рандомный 'ключ', что используется для выбора реплик питомца в ответ на действие игрока
+                answer_key = rr(0, 3)
+                # Список ответов
+                # Мне бы, конечно, лучше было бы заняться исправлением логических ошибок в коде, а не этим
+                # заниматься, но решил хотя бы в этот метод добавить такую реализацию интереса ради :)
+                random_answer = [('Было очень вкусно! Спасибо!'),
+                                 ('Из тебя повар, как из меня человек! Но всё равно неплохо :P'),
+                                 ('Благодарю, человек!')]
 
-                print(f'{last_data.name.title()}: "было очень вкусно! Спасибо!"')
+
+                print(f'{last_data.name.title()}: {random_answer[answer_key]}')
                 print(f'Уровень голода уменьшился на {feed_value_hunger}. Текущий уровень голода '
                       f'{last_data.body_last.hunger - feed_value_hunger}')
                 print(f'Злость уменьшилась на {feed_value_anger}. Текущий уровень золости '
                       f'{last_data.mind_last.anger - feed_value_anger}')
+
                 new_hunger_value = last_data.body_last.hunger - feed_value_hunger
                 new_anger_value = last_data.mind_last.anger - feed_value_anger
                 data.PersistenceManager.write_states({
@@ -152,7 +172,7 @@ class Controller:
                         "stamina": last_data.body_last.stamina,
                         "hunger": new_hunger_value,
                         "thirst": last_data.body_last.thirst,
-                        "intestine": last_data.body_last.intestine
+                        "intestine": last_data.body_last.intestine + feed_value_intestine
                     }
                 })
 
@@ -238,3 +258,4 @@ class Controller:
 if __name__ == '__main__':
     controller = Controller()
     controller.mainloop(5, 1)
+
