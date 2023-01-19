@@ -3,6 +3,7 @@ import datetime
 from datetime import datetime as dt, timedelta as td, date
 from random import choice
 from random import randrange as rr
+from pprint import pprint
 
 # импорт дополнительных модулей текущего пакета
 from src.utils import constants
@@ -16,11 +17,13 @@ class Body:
                  health: int,
                  stamina: int,
                  hunger: int,
-                 thirst: int):
+                 thirst: int,
+                 intestine: int):
         self.health = health
         self.stamina = stamina
         self.hunger = hunger
         self.thirst = thirst
+        self.intestine = intestine
 
 
 class Mind:
@@ -90,6 +93,7 @@ class Creature:
         changed_anger = self.mind.anger + rr(-10, 10)
         changed_anxiety = self.mind.anxiety + rr(-10, 10)
         changed_joy= self.mind.joy + rr(-10, 10)
+        changed_intestine = self.body.intestine + rr(-10, 10)
 
         read_last_state = data.PersistenceManager.read_states()
 
@@ -99,21 +103,21 @@ class Creature:
             "birthdate": str(read_last_state.birthdate),
             "mind_state": {
                 "timestamp": str(read_last_state.mind_last.timestamp),
-                "joy": read_last_state.mind_last.joy + changed_joy,
+                "joy": changed_joy,
                 "activity": read_last_state.mind_last.activity,
-                "anger": read_last_state.mind_last.anger + changed_anger ,
-                "anxiety": read_last_state.mind_last.anxiety + changed_anxiety
+                "anger": changed_anger ,
+                "anxiety": changed_anxiety
             },
             "body_state": {
                 "timestamp": str(read_last_state.body_last.timestamp),
-                "health": read_last_state.body_last.health + changed_health,
-                "stamina": read_last_state.body_last.stamina + changed_stamina,
-                "hunger": read_last_state.body_last.hunger + changed_hunger,
-                "thirst": read_last_state.body_last.thirst + changed_thirst,
-                "intestine": read_last_state.body_last.intestine
+                "health": changed_health,
+                "stamina": changed_stamina,
+                "hunger": changed_hunger,
+                "thirst": changed_thirst,
+                "intestine": changed_intestine
             }
         })
-
+        print('==============Параметры питомца обновлены==============')
         return changed_pet
         # return {'hunger': self.body.hunger + rr(-10, 10),
         #         'stamina': self.body.stamina + rr(-10, 10),
@@ -124,14 +128,25 @@ class Creature:
         #         'joy': self.mind.joy + rr(-10, 10)}
 
 
+    @staticmethod
+    def apply_tick_changes():
+        active_pet = data.PersistenceManager.read_states()
+        cr = Creature(active_pet.name,
+                                         active_pet.birthdate,
+                                         active_pet.body_last,
+                                         active_pet.mind_last,
+                                         active_pet.kind.value)
+        apply = cr.tick_changes()
+        return apply
+
     # КОММЕНТАРИЙ: можно, кстати, добавить отдельную ветку классов видов пищи, которые по-разному влияют на разных существ...)) так или иначе, какие-то виды пищи всё равно нужны, иначе как тогда понимать, какие значения должны передаваться в этот метод
 
     def feed(self) -> tuple:
         self.body.hunger = rr(10, 18)
         self.mind.anger = rr(5, 12)
-        return self.body.hunger, self.mind.anger
+        self.body.intestine = rr(9, 17)
+        return self.body.hunger, self.mind.anger, self.body.intestine
 
-    # В ближайшее свободное время исправлю реализации других соседствующих методов :)
     def play(self) -> tuple:
         self.body.stamina = rr(4, 15)
         self.mind.joy = rr(5, 14)
