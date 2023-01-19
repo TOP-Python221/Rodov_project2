@@ -1,8 +1,10 @@
 # импорт из стандартной библиотеки
+import datetime
 from json import load as jload, dump as jdump
 from fractions import Fraction as frac
 from datetime import datetime as dt
 from random import randrange as rr
+from pprint import pprint
 
 # импорт дополнительных модулей текущего пакета
 from src.model import creature
@@ -166,19 +168,19 @@ class StateCalculator:
             "name": self.name,
             "birthdate": self.birhdate + ' 00:00:00',
             "mind_state": {
-                "timestamp": "2022-11-26 17:30:00",
+                "timestamp": "0000-00-00 00:00:00",
                 "joy": self.mind.joy,
                 "activity": '',
                 "anger": self.mind.anger,
                 "anxiety": self.mind.anxiety
             },
             "body_state": {
-                "timestamp": "2022-11-26 17:30:00",
+                "timestamp": "0000-00-00 00:00:00",
                 "health": self.body.health,
                 "stamina": self.body.stamina,
                 "hunger": self.body.hunger,
                 "thirst": self.body.thirst,
-                "intestine": ''
+                "intestine": self.body.intestine
             }
         })
         return creature.Creature(self.name, self.birhdate,
@@ -190,7 +192,8 @@ class StateCalculator:
         return creature.Body(self.last.body_last.health,
                              self.last.body_last.stamina,
                              self.last.body_last.hunger,
-                             self.last.body_last.thirst)
+                             self.last.body_last.thirst,
+                             self.last.body_last.intestine)
 
     def __revive_mind(self) -> 'Mind':
         """Вычисляет мгновенные значения параметров Mind после загрузки данных из файлов состояний"""
@@ -280,5 +283,4 @@ class PersistenceManager:
 
 # тесты
 if __name__ == '__main__':
-    st = StateCalculator()
-    print(st.create_new_creature().play())
+    ''''''

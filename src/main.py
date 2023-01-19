@@ -1,4 +1,6 @@
 # импорт из стандартной библиотеки
+import datetime
+
 from schedule import every
 import schedule
 from threading import Event
@@ -39,20 +41,21 @@ class Controller:
             command = input(' >>> ').lower()
 
             if command == 'quit' or command == 'q' or command == 'выход':
+                last_timestamp = str(datetime.datetime.today()).split('.')[0]
                 last_pet_state = data.PersistenceManager.read_states()
                 data.PersistenceManager.write_states({
                     "kind": str(last_pet_state.kind.value),
                     "name": str(last_pet_state.name.title()),
                     "birthdate": str(last_pet_state.birthdate),
                     "mind_state": {
-                        "timestamp": str(last_pet_state.mind_last.timestamp),
+                        "timestamp": last_timestamp,
                         "joy": last_pet_state.mind_last.joy,
                         "activity": last_pet_state.mind_last.activity,
                         "anger": last_pet_state.mind_last.anger,
                         "anxiety": last_pet_state.mind_last.anxiety
                     },
                     "body_state": {
-                        "timestamp": str(last_pet_state.body_last.timestamp),
+                        "timestamp": last_timestamp,
                         "health": last_pet_state.body_last.health,
                         "stamina": last_pet_state.body_last.stamina,
                         "hunger": last_pet_state.body_last.hunger,
@@ -144,7 +147,7 @@ class Controller:
                 # заниматься, но решил хотя бы в этот метод добавить такую реализацию интереса ради :)
                 random_answer = [('Было очень вкусно! Спасибо!'),
                                  ('Из тебя повар, как из меня человек! Но всё равно неплохо :P'),
-                                 ('Благодарю, человек!')]
+                                 ('Благодарю, кожаный!')]
 
 
                 print(f'{last_data.name.title()}: {random_answer[answer_key]}')
@@ -258,4 +261,3 @@ class Controller:
 if __name__ == '__main__':
     controller = Controller()
     controller.mainloop(5, 1)
-

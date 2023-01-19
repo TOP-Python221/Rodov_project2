@@ -117,6 +117,7 @@ class Creature:
                 "intestine": changed_intestine
             }
         })
+
         print('==============Параметры питомца обновлены==============')
         return changed_pet
         # return {'hunger': self.body.hunger + rr(-10, 10),
