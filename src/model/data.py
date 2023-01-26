@@ -150,19 +150,18 @@ class StateCalculator:
     def create_new_creature(self) -> 'Creature':
         """Создаёт нового зверька"""
         # Так как питомец новый - интереса ради рандом распределит параметры для зверька
-        self.body = creature.Body(rr(1, 6), rr(-1, 4), rr(-3, 5), rr(-3, 5))
+        self.body = creature.Body(rr(1, 6), rr(-1, 4), rr(-3, 5), rr(-3, 5), rr(-3, 5))
 
         self.mind = creature.Mind(rr(-4, 4), rr(-3, 4), rr(0, 5))
 
-        # self.kind = input('Введите один из доступных видов питомца(cat - кот, dog - собака, '
-                          # , fox - лиса, bear - медведь, snake - змея, lizard - ящерица) >>> ').lower()
-        self.kind = 'cat'
+        self.kind = input('Введите один из доступных видов питомца(cat - кот, dog - собака, fox - лиса, bear - медведь, snake - змея, lizard - ящерица) >>> ').lower()
+        # self.kind = 'cat'
 
-        # self.name = input('Введите имя питомца >>> ').lower()
-        self.name = 'кот'
+        self.name = input('Введите имя питомца >>> ').lower()
+        # self.name = 'кот'
 
-        # self.birhdate = input('Дата рождения Вашего питомца(Год-Месяц-День) >>> ')
-        self.birhdate = '2020-12-12'
+        self.birhdate = input('Дата рождения Вашего питомца(Год-Месяц-День) >>> ')
+        # self.birhdate = '2020-12-12'
         PersistenceManager.write_states({
             "kind": self.kind,
             "name": self.name,

@@ -1,0 +1,1 @@
+{"cat": {"title": "cat", "maturation": [3, 10, 39, 45], "ranges": {"cub": {"health": {"1,2": {"stamina": "-1", "hunger": "0", "thirst": "2", "joy": "-100", "activity": "-1/24", "anger": "-100", "anxiety": "-1/24"}, "2,7": {"stamina": "0", "hunger": "2", "thirst": "3", "joy": "-5", "activity": "-1/120", "anger": "0", "anxiety": "1/240", "some_key": "some_value"}}}}}}

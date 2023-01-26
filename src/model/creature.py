@@ -40,6 +40,7 @@ class Mind:
         self.anxiety = anxiety
         self.anger = anger
 
+
     @property
     def get_pattern(self):
         return self.anger
@@ -64,6 +65,7 @@ class Creature:
         self.body = body_obj
         self.mind = mind_obj
         self.kind = kind
+
         self._actions = [CreatureActions.be_a_naughty_cat(),
                          CreatureActions.be_a_cat(),
                          CreatureActions.seek_for_honey()]

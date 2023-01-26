@@ -3,9 +3,8 @@ from pytest import mark, fixture
 
 # импорт дополнительных модулей другого пакета
 from src.model.data import PersistenceManager as PM
-from src.for_tests import foo
 from src.utils import constants
-from src.model import states
+
 
 
 # К сожалению, это пока что всё, что я смог из себя выдавить за один день :)
@@ -72,6 +71,7 @@ class TestActiveParameters:
   @staticmethod
   def test_happy_keys():
     assert ['title', 'maturity', 'cub', 'young', 'adult', 'elder', 'Ranges', 'age_ranges'] == get_init_param()
+
 
 
 # def get_init_param():
