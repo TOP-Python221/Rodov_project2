@@ -61,8 +61,7 @@ class KindParameters:
         maturity = other if isinstance(other, tuple) else other.maturity
         cub = other if isinstance(other, tuple) else other.cub
 
-        return self.elder == elder, self.young == young, self.adult == adult, self.title == title, self.maturity == \
-               maturity, self.cub == cub
+        return self.elder == elder, self.young == young, self.adult == adult, self.title == title, self.maturity == maturity, self.cub == cub
 
 
     def age_ranges(self, days: int) -> Ranges:
@@ -145,48 +144,44 @@ class StatesManager:
 class StateCalculator:
     """Рассчитывает состояние зверька"""
     def __init__(self):
-        self.last = PersistenceManager.read_states()
+        self.last: StatesManager = PersistenceManager.read_states()
 
     def create_new_creature(self) -> 'Creature':
         """Создаёт нового зверька"""
         # Так как питомец новый - интереса ради рандом распределит параметры для зверька
-        self.body = creature.Body(rr(1, 6), rr(-1, 4), rr(-3, 5), rr(-3, 5), rr(-3, 5))
-
-        self.mind = creature.Mind(rr(-4, 4), rr(-3, 4), rr(0, 5))
-
-        self.kind = input('Введите один из доступных видов питомца(cat - кот, dog - собака, fox - лиса, bear - медведь, snake - змея, lizard - ящерица) >>> ').lower()
+        body = creature.Body(rr(1, 6), rr(-1, 4), rr(-3, 5), rr(-3, 5), rr(-3, 5))
+        mind = creature.Mind(rr(-4, 4), rr(-3, 4), rr(0, 5))
+        kind = input('Введите один из доступных видов питомца(cat - кот, dog - собака, fox - лиса, bear - медведь, snake - змея, lizard - ящерица) >>> ').lower()
         # self.kind = 'cat'
-
-        self.name = input('Введите имя питомца >>> ').lower()
+        name = input('Введите имя питомца >>> ').lower()
         # self.name = 'кот'
+        birthdate = dt.now()  # input('Дата рождения Вашего питомца(Год-Месяц-День) >>> ')
+        # self.birthdate = '2020-12-12'
+        # ДОБАВИТЬ: все сгенерированные данные запихнуть в StatesManager
 
-        self.birhdate = input('Дата рождения Вашего питомца(Год-Месяц-День) >>> ')
-        # self.birhdate = '2020-12-12'
         PersistenceManager.write_states({
-            "kind": self.kind,
-            "name": self.name,
-            "birthdate": self.birhdate + ' 00:00:00',
+            "kind": kind,
+            "name": name,
+            "birthdate": f'{birthdate:%Y-%m-%d %H:%M:%S}',
             "mind_state": {
                 "timestamp": "0000-00-00 00:00:00",
-                "joy": self.mind.joy,
+                "joy": mind.joy,
                 "activity": '',
-                "anger": self.mind.anger,
-                "anxiety": self.mind.anxiety
+                "anger": mind.anger,
+                "anxiety": mind.anxiety
             },
             "body_state": {
-                "timestamp": "0000-00-00 00:00:00",
-                "health": self.body.health,
-                "stamina": self.body.stamina,
-                "hunger": self.body.hunger,
-                "thirst": self.body.thirst,
-                "intestine": self.body.intestine
+                "timestamp": f'{birthdate:%Y-%m-%d %H:%M:%S}',
+                "health": body.health,
+                "stamina": body.stamina,
+                "hunger": body.hunger,
+                "thirst": body.thirst,
+                "intestine": body.intestine
             }
         })
-        return creature.Creature(self.name, self.birhdate,
-                                 self.body, self.mind,
-                                 self.kind)
+        return creature.Creature(name, birthdate, body, mind, kind)
 
-    def __revive_body(self) -> 'Body':
+    def __revive_body(self) -> 'creature.Body':
         """Вычисляет мгновенные значения параметров Body после загрузки данных из файлов состояний"""
         return creature.Body(self.last.body_last.health,
                              self.last.body_last.stamina,
@@ -194,13 +189,13 @@ class StateCalculator:
                              self.last.body_last.thirst,
                              self.last.body_last.intestine)
 
-    def __revive_mind(self) -> 'Mind':
+    def __revive_mind(self) -> 'creature.Mind':
         """Вычисляет мгновенные значения параметров Mind после загрузки данных из файлов состояний"""
         return creature.Mind(self.last.mind_last.anxiety,
                              self.last.mind_last.joy,
                              self.last.mind_last.anger)
 
-    def revive_creature(self) -> 'Creature':
+    def revive_creature(self) -> 'creature.Creature':
         """Считывает последние состояния Mind, Body зверька и возвращает новые значения"""
         return creature.Creature(self.last.name,
                                  self.last.birthdate,
@@ -215,6 +210,7 @@ class PersistenceManager:
     """
     default_parameters_path = constants.BASE_DIR / 'data/tests/parameters.json'
     default_states_path = constants.BASE_DIR / 'data/tests/states.json'
+
     @classmethod
     def read_parameters(cls, kind: constants.Kind, parameters_path: constants.pathlike = None) -> 'KindParameters':
         """"""
@@ -277,7 +273,7 @@ class PersistenceManager:
         if not states_path:
             states_path = cls.default_states_path
         with open(states_path, 'w', encoding='utf-8') as open_file:
-            jdump(data, open_file)
+            jdump(data, open_file, indent=2)
 
 
 # тесты

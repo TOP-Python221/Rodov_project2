@@ -142,30 +142,21 @@ class Creature:
         apply = cr.tick_changes()
         return apply
 
-    # КОММЕНТАРИЙ: можно, кстати, добавить отдельную ветку классов видов пищи, которые по-разному влияют на разных существ...)) так или иначе, какие-то виды пищи всё равно нужны, иначе как тогда понимать, какие значения должны передаваться в этот метод
+    @staticmethod
+    def feed() -> tuple:
+        return rr(10, 18), rr(5, 12), rr(9, 17)
 
-    def feed(self) -> tuple:
-        self.body.hunger = rr(10, 18)
-        self.mind.anger = rr(5, 12)
-        self.body.intestine = rr(9, 17)
-        return self.body.hunger, self.mind.anger, self.body.intestine
+    @staticmethod
+    def play() -> tuple:
+        return rr(4, 15), rr(5, 14), rr(3, 11)
 
-    def play(self) -> tuple:
-        self.body.stamina = rr(4, 15)
-        self.mind.joy = rr(5, 14)
-        self.mind.anger = rr(3, 11)
-        return self.body.stamina, self.mind.joy, self.mind.anger
+    @staticmethod
+    def talk() -> tuple:
+        return rr(1, 7), rr(0, 5), rr(3, 11)
 
-    def talk(self) -> tuple:
-        # КОММЕНТАРИЙ: я бы ещё сказал, что разговор уменьшает тревожность — впрочем, это зависит от вида питомца, от его возраста — вполне вероятно я бы сказал, что такие значения необходимо учитывать в параметрической модели (и, соответственно, в KindParameters) — но можно обойтись и константами
-        self.mind.anger = rr(1, 7)
-        self.mind.joy = rr(0, 5)
-        self.mind.anxiety = rr(3, 11)
-        return self.mind.anger, self.mind.joy, self.mind.anxiety
-
-    def clean(self) -> tuple:
-        self.mind.anger = rr(1, 8)
-        return self.mind.anger
+    @staticmethod
+    def clean() -> int:
+        return rr(1, 8)
 
     def action(self):
         """"""

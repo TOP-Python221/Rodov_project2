@@ -49,7 +49,7 @@ class Creature {
 }
 Creature <|-- CreatureActions
 Creature::kind o-- KindParameters
-Creature --|> Controller
+Creature -left-o Controller
 
 
 class CreatureActions {
@@ -172,6 +172,8 @@ PersistenceManager --> KindParameters
 
 
 class Controller{
+    +data_active_pet: StatesManager
+    +active_pet: Creature
     +mainloop()
 }
 

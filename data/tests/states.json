@@ -1,1 +1,20 @@
-{"kind": "Kind.CAT", "name": "Cat", "birthdate": "2023-01-01 00:00:00", "mind_state": {"timestamp": "2023-01-23 16:53:37", "joy": -9, "activity": "", "anger": 10, "anxiety": 21}, "body_state": {"timestamp": "2023-01-23 16:53:37", "health": 8, "stamina": -21, "hunger": 23, "thirst": 27, "intestine": 12}}
+{
+  "kind": "cat",
+  "name": "Cat",
+  "birthdate": "2023-01-01 00:00:00",
+  "mind_state": {
+    "timestamp": "2023-01-26 16:34:37",
+    "joy": -25,
+    "activity": "",
+    "anger": 22,
+    "anxiety": 39
+  },
+  "body_state": {
+    "timestamp": "2023-01-26 16:34:37",
+    "health": 1,
+    "stamina": -41,
+    "hunger": 18,
+    "thirst": -11,
+    "intestine": 6
+  }
+}

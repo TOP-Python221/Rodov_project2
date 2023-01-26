@@ -16,20 +16,23 @@ class Controller:
     def __init__(self):
         self.data_active_pet = data.PersistenceManager.read_states()
 
-        start_game_day = int(str(datetime.datetime.today()).split(' ')[0].split('-')[2])
-        end_game_day = int(str(self.data_active_pet.body_last.timestamp).split(' ')[0].split('-')[2])
+        start_game_day = datetime.datetime.today().day
+        end_game_day = self.data_active_pet.body_last.timestamp.day
 
         if self.data_active_pet.body_last.health == '':
             self.active_pet = data.StateCalculator().create_new_creature()
         else:
             self.active_pet = data.StateCalculator().revive_creature()
 
+        # ИСПРАВИТЬ: использовать объекты datetime и timedelta
         if end_game_day > start_game_day:
             days_passed = 31 - start_game_day + end_game_day
             print(f' Прожито дней {days_passed}')
+            # ...
         else:
             days_passed = start_game_day - end_game_day
             print(f' Прожито дней {days_passed}')
+            # ...
 
 
     def mainloop(self, tick_interval: int = 900, thread_interval: float = 90):
@@ -45,7 +48,8 @@ class Controller:
         timestamp = str(datetime.datetime.today()).split('.')[0]
 
         data.PersistenceManager.write_states({
-            "kind": str(mainloop_pet.kind),
+            # ИСПРАВИТЬ здесь и далее: на mainloop_pet.kind.value
+            "kind": str(mainloop_pet.kind.value),
             "name": str(mainloop_pet.name.title()),
             "birthdate": str(mainloop_pet.birthdate),
             "mind_state": {
@@ -106,32 +110,32 @@ class Controller:
 
                 elif command == 'play' or command =='p':
 
-                    play_value_stamina = self.active_pet.play()[0]
-                    play_value_joy = self.active_pet.play()[1]
-                    play_value_anger = self.active_pet.play()[2]
+                    play_delta_stamina = self.active_pet.play()[0]
+                    play_delta_joy = self.active_pet.play()[1]
+                    play_delta_anger = self.active_pet.play()[2]
 
                     print(f'{last_data.name.title()} обрадовался! =^_^= <З')
-                    print(f'Стамина уменьшилась на {play_value_stamina} единиц. Текущий уровень стамины '
-                          f'{last_data.body_last.stamina - play_value_stamina}')
-                    print(f'Злость уменьшилась на {play_value_anger} единиц. Текущий уровень злости '
-                          f'{last_data.mind_last.anger - play_value_anger}')
-                    print(f'Радость увеличилась на {play_value_joy} единиц. Текущий уровень радости '
-                          f'{last_data.mind_last.joy + play_value_joy}')
+                    print(f'Стамина уменьшилась на {play_delta_stamina} единиц. Текущий уровень стамины '
+                          f'{last_data.body_last.stamina - play_delta_stamina}')
+                    print(f'Злость уменьшилась на {play_delta_anger} единиц. Текущий уровень злости '
+                          f'{last_data.mind_last.anger - play_delta_anger}')
+                    print(f'Радость увеличилась на {play_delta_joy} единиц. Текущий уровень радости '
+                          f'{last_data.mind_last.joy + play_delta_joy}')
                     data.PersistenceManager.write_states({
                         "kind": str(last_data.kind.value),
                         "name": str(last_data.name.title()),
                         "birthdate": str(last_data.birthdate),
                         "mind_state": {
                             "timestamp": str(last_data.mind_last.timestamp),
-                            "joy": last_data.mind_last.joy + play_value_joy,
+                            "joy": last_data.mind_last.joy + play_delta_joy,
                             "activity": last_data.mind_last.activity,
-                            "anger": last_data.mind_last.anger - play_value_anger,
+                            "anger": last_data.mind_last.anger - play_delta_anger,
                             "anxiety": last_data.mind_last.anxiety
                         },
                         "body_state": {
                             "timestamp": str(last_data.body_last.timestamp),
                             "health": last_data.body_last.health,
-                            "stamina": last_data.body_last.stamina - play_value_stamina,
+                            "stamina": last_data.body_last.stamina - play_delta_stamina,
                             "hunger": last_data.body_last.hunger,
                             "thirst": last_data.body_last.thirst,
                             "intestine": last_data.body_last.intestine
@@ -140,17 +144,17 @@ class Controller:
 
                 elif command == 'talk' or command == 't':
 
-                    talk_value_anger = self.active_pet.talk()[0]
-                    talk_value_joy = self.active_pet.talk()[1]
-                    talk_value_anxiety = self.active_pet.talk()[1]
+                    talk_delta_anger = self.active_pet.talk()[0]
+                    talk_delta_joy = self.active_pet.talk()[1]
+                    talk_delta_anxiety = self.active_pet.talk()[1]
 
                     print(f'{last_data.name.title()}: "было приятно с тобой побеседовать! ;)"')
-                    print(f'Злость уменьшилась на {talk_value_anger} единиц. Текущий уровень злости '
-                          f'{last_data.mind_last.anger  + talk_value_anger}')
-                    print(f'Радость увеличилась на {talk_value_joy} единиц. Текущий уровень радости '
-                          f'{last_data.mind_last.joy + talk_value_joy}')
-                    print(f'Тревожность уменьшилась на {talk_value_anxiety} единиц. Текущий уровень тревожности '
-                          f'{last_data.mind_last.anxiety - talk_value_anxiety}')
+                    print(f'Злость уменьшилась на {talk_delta_anger} единиц. Текущий уровень злости '
+                          f'{last_data.mind_last.anger  + talk_delta_anger}')
+                    print(f'Радость увеличилась на {talk_delta_joy} единиц. Текущий уровень радости '
+                          f'{last_data.mind_last.joy + talk_delta_joy}')
+                    print(f'Тревожность уменьшилась на {talk_delta_anxiety} единиц. Текущий уровень тревожности '
+                          f'{last_data.mind_last.anxiety - talk_delta_anxiety}')
 
                     data.PersistenceManager.write_states({
                         "kind": str(last_data.kind.value),
@@ -158,10 +162,10 @@ class Controller:
                         "birthdate": str(last_data.birthdate),
                         "mind_state": {
                             "timestamp": str(last_data.mind_last.timestamp),
-                            "joy": last_data.mind_last.joy + talk_value_joy,
+                            "joy": last_data.mind_last.joy + talk_delta_joy,
                             "activity": last_data.mind_last.activity,
-                            "anger": last_data.mind_last.anger + talk_value_anger,
-                            "anxiety": last_data.mind_last.anxiety + talk_value_anxiety
+                            "anger": last_data.mind_last.anger + talk_delta_anger,
+                            "anxiety": last_data.mind_last.anxiety + talk_delta_anxiety
                         },
                         "body_state": {
                             "timestamp": str(last_data.body_last.timestamp),
@@ -219,7 +223,9 @@ class Controller:
 
                 elif command == 'clean' or command == 'c':
                     print(f'{last_data.name.title()} вами доволен! :D')
+
                     clean_value_anger = self.active_pet.clean()
+
                     data.PersistenceManager.write_states({
                         "kind": str(last_data.kind.value),
                         "name": str(last_data.name.title()),
